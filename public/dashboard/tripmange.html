@@ -12,9 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="../app.js"></script>
     <script src="dashboard.js" defer></script>
-    
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-   
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
@@ -148,16 +146,7 @@
 
     <!-- ======================================================================================================================-->
     <main>
-        <!--<script>
-            document.addEventListener("DOMContentLoaded",function(){
-                lodedata ();
-                console.log('sa')
-            })
-            function lodedata(){
-                deviseId = localStorage.getItem("deviceId");
-                console.log(deviseId);
-            }
-        </script>--->
+       
         <div class="title-container">
             <h1>Drive<span class="highlight">Link</span></h1>
             <p>Trip Manage</p>
@@ -215,10 +204,12 @@
                     const userRef = ref(db, `${userId}/tracking`);
                     onValue(userRef, (snapshot) => {
                         if (snapshot.exists()) {
+                            
                             const data = snapshot.val();
                             let newPos = [data.latitude, data.longitude];
 
                             if (startTime !== null && trackingActive) {
+                                
                                 let lastPos = path[path.length - 1];
 
                                 if (lastPos) totalDistance += calculateDistance(lastPos, newPos);
@@ -329,7 +320,7 @@
 
               
                        // Add event listeners after the page loads
-                        document.addEventListener("DOMContentLoaded", () => {
+                            document.addEventListener("DOMContentLoaded", () => {
                             document.getElementById("startButton").addEventListener("click", startTracking);
                             document.getElementById("endButton").addEventListener("click", endTracking);
                             document.getElementById("reportButton").addEventListener("click",saveToFirestore);
