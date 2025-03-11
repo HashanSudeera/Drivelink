@@ -12,9 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="../app.js"></script>
     <script src="dashboard.js" defer></script>
-    
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-   
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
@@ -148,16 +146,7 @@
 
     <!-- ======================================================================================================================-->
     <main>
-        <!--<script>
-            document.addEventListener("DOMContentLoaded",function(){
-                lodedata ();
-                console.log('sa')
-            })
-            function lodedata(){
-                deviseId = localStorage.getItem("deviceId");
-                console.log(deviseId);
-            }
-        </script>--->
+        
         <div class="title-container">
             <h1>Drive<span class="highlight">Link</span></h1>
             <p>Trip Manage</p>
@@ -188,161 +177,164 @@
             </div>   
                 
                     <script type="module">
+                        // Import necessary Firebase modules
+                     // Import necessary Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-                    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-                    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-                    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-                    let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
+const app = initializeApp(firebaseConfig);
+const firestore = getFirestore(app);
+const db = getDatabase(app);
+const userId = localStorage.getItem("deviceId");
 
-                    const app = initializeApp(firebaseConfig);
-                    const firestore = getFirestore(app);
-                    const db = getDatabase(app);
-                    const userId = deviceId;
-                    
-                    
-                    
-                    let map = L.map('map').setView([0, 0], 13);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                    
-                    let marker = L.marker([0, 0]).addTo(map);
-                    let trackingActive = false;
-                    let startTime = null, endTime = null, totalDistance = 0, totalDuration = 0, movingDuration = 0, topSpeed = 0;
-                    let path = [];
-                    let polyline = L.polyline([], { color: 'red' }).addTo(map);
-                    let lastBearing = null;
-                    const minDistanceThreshold = 10; // Minimum distance (meters) between saved points
+// Initialize map
+let map = L.map('map').setView([0, 0], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+let marker = L.marker([0, 0]).addTo(map);
+let polyline = L.polyline([], { color: 'red' }).addTo(map);
 
-                    const userRef = ref(db, `${userId}/tracking`);
-                    onValue(userRef, (snapshot) => {
-                        if (snapshot.exists()) {
-                            const data = snapshot.val();
-                            let newPos = [data.latitude, data.longitude];
+// Custom markers
+const startIcon = L.icon({
+    iconUrl: 'start-marker.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
+const endIcon = L.icon({
+    iconUrl: 'end-marker.png',
+    iconSize: [2, 41],
+    iconAnchor: [12, 41]
+});
+const stopIcon = L.icon({
+    iconUrl: 'stop-marker.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
 
-                            if (startTime !== null && trackingActive) {
-                                let lastPos = path[path.length - 1];
+// Tracking variables
+let trackingActive = false;
+let startTime = null, endTime = null;
+let totalDistance = 0, totalDuration = 0, movingDuration = 0, topSpeed = 0;
+let path = [];
+let stopStartTime = null;
+let startMarker, endMarker;
+let stopMarkers = [];
 
-                                if (lastPos) totalDistance += calculateDistance(lastPos, newPos);
+// Start tracking
+document.addEventListener("DOMContentLoaded", () => {
+    const startButton = document.getElementById("startButton");
+    const endButton = document.getElementById("endButton");
+    const reportButton = document.getElementById("reportButton");
 
-                                /* // ✅ Only save if the new point is at least X meters apart from the last one
-                                if (!lastPos || calculateDistance(lastPos, newPos) > minDistanceThreshold) {
-                                    path.push(newPos);
-                                    batchPath.push({ lat: newPos[0], lon: newPos[1] });
-                                }
-                                if (batchPath.length >= 25) {
-                                    saveBatchToFirestore(batchPath);
-                                    batchPath = [];
-                                } */
-                                let currentTime = new Date().getTime();
-                                totalDuration = (currentTime - startTime) / 1000;
-                                if (data.speed > 0) movingDuration = totalDuration;
-                                if (data.speed > topSpeed) topSpeed = data.speed;
-                            }
+    if (startButton) {
+        startButton.addEventListener("click", () => {
+            trackingActive = true;
+            startTime = new Date();
+            startButton.disabled = true;
+            endButton.disabled = false;
+        });
+    }
 
-                            if (trackingActive) {
-                                path.push(newPos);
-                                polyline.setLatLngs(path);
-                            }
+    if (endButton) {
+        endButton.addEventListener("click", () => {
+            trackingActive = false;
+            endTime = new Date();
+            endButton.disabled = true;
+            reportButton.disabled = false;
+            
+            // Mark end point
+            if (!endMarker) {
+                endMarker = L.marker(path[path.length - 1], { icon: endIcon }).addTo(map);
+            }
+        });
+    }
 
-                            marker.setLatLng(newPos);
-                            map.setView(newPos);
+    if (reportButton) {
+        reportButton.addEventListener("click", async () => {
+            try {
+                if (!startTime || !endTime) return alert("Start or end time missing.");
 
-                            // ✅ Only update UI if elements exist
-                            if (document.getElementById("speed")) document.getElementById("speed").innerText = data.speed.toFixed(2);
-                            if (document.getElementById("satellites")) document.getElementById("satellites").innerText = data.satellites || "N/A";
-                            if (document.getElementById("distance")) document.getElementById("distance").innerText = totalDistance.toFixed(2);
-                            if (document.getElementById("duration")) document.getElementById("duration").innerText = totalDuration.toFixed(2);
-                            if (document.getElementById("movingTime")) document.getElementById("movingTime").innerText = movingDuration.toFixed(2);
-                            if (document.getElementById("topSpeed")) document.getElementById("topSpeed").innerText = topSpeed.toFixed(2);
-                        }
-                    });
+                const tripData = {
+                    distance: totalDistance.toFixed(2) + " km",
+                    duration: ((endTime - startTime) / 1000).toFixed(2) + " sec",
+                    movingTime: movingDuration.toFixed(2) + " sec",
+                    topSpeed: topSpeed.toFixed(2) + " km/h",
+                    startTime: startTime.toISOString(),
+                    endTime: endTime.toISOString(),
+                    tripDate: startTime.toISOString().split("T")[0],
+                    route: path.map(coords => ({ lat: coords[0], lon: coords[1] })),
+                    stopPoints: stopMarkers.map(marker => marker.getLatLng()),
+                    startPoint: path[0],
+                    endPoint: path[path.length - 1]
+                };
+                await addDoc(collection(firestore, `tripReports/${userId}/trips`), tripData);
+                alert("Trip saved to Firestore!");
+            } catch (error) {
+                console.error("Error saving trip: ", error);
+            }
+        });
+    }
+});
 
+// Listen to GPS data from Firebase
+const userRef = ref(db, `${userId}/tracking`);
+onValue(userRef, (snapshot) => {
+    if (!snapshot.exists()) return;
 
-                    function calculateDistance(latlng1, latlng2) {
-                        // Haversine formula to calculate the distance between two latitude/longitude pairs
-                        const R = 6371e3; // Earth radius in meters
-                        const φ1 = latlng1[0] * Math.PI / 180; // φ, λ in radians
-                        const φ2 = latlng2[0] * Math.PI / 180;
-                        const Δφ = (latlng2[0] - latlng1[0]) * Math.PI / 180;
-                        const Δλ = (latlng2[1] - latlng1[1]) * Math.PI / 180;
+    const data = snapshot.val();
+    let newPos = [data.latitude, data.longitude];
 
-                        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                                Math.cos(φ1) * Math.cos(φ2) *
-                                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    if (trackingActive) {
+        // Mark start point
+        if (!startMarker) {
+            startMarker = L.marker(newPos, { icon: startIcon }).addTo(map);
+        }
+        
+        let lastPos = path[path.length - 1];
+        if (lastPos) totalDistance += calculateDistance(lastPos, newPos);
+        
+        path.push(newPos);
+        polyline.setLatLngs(path);
+        
+        // Stop detection
+        if (data.speed < 5) {
+            if (!stopStartTime) stopStartTime = new Date();
+            let elapsedTime = (new Date() - stopStartTime) / 60000;
+            if (elapsedTime >= 5) {
+                let stopMarker = L.marker(newPos, { icon: stopIcon }).addTo(map);
+                stopMarkers.push(stopMarker);
+                stopStartTime = null;
+            }
+        } else {
+            stopStartTime = null;
+        }
+    }
 
-                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    // Update UI in real-time
+    document.getElementById("speed").innerText = data.speed.toFixed(2);
+    document.getElementById("distance").innerText = totalDistance.toFixed(2);
+    document.getElementById("duration").innerText = ((new Date() - startTime) / 1000).toFixed(2);
+    document.getElementById("movingTime").innerText = movingDuration.toFixed(2);
+    document.getElementById("topSpeed").innerText = topSpeed.toFixed(2);
+    document.getElementById("satellites").innerText = data.satellites || "N/A";
 
-                        return R * c; // returns the distance in meters
-                    }
+    marker.setLatLng(newPos);
+    map.setView(newPos);
+});
 
-
-                    const currentTime = new Date();
-
-                    // Start Button Click
-                    function startTracking() {
-                        trackingActive = true;
-                       /*  startTime = new Date(); */
-                        
-                        startTime = currentTime.toLocaleTimeString(); // This will return just the time in the format "HH:MM:SS"
-                        console.log("Start time: " + startTime);
-                        totalDistance = totalDuration = movingDuration = topSpeed = 0;
-                        path = [];
-                        polyline.setLatLngs([]);
-                        
-                        document.getElementById("startButton").disabled = true;
-                        document.getElementById("endButton").disabled = false;
-                        document.getElementById("reportButton").disabled = true;
-                    }
-
-
-                    // End Button Click
-                    function endTracking() {
-                        trackingActive = false;
-                        endTime = currentTime.toLocaleTimeString(); // This will return just the time in the format "HH:MM:SS"
-                        totalDuration = (endTime - startTime) / 1000; // ✅ Calculate total duration correctly
-
-                        document.getElementById("startButton").disabled = false;
-                        document.getElementById("endButton").disabled = true;
-                        document.getElementById("reportButton").disabled = false;
-                    }
-
-
-                    async function saveToFirestore() {
-                        try {
-                            if (!startTime || !endTime) {
-                                alert("⚠️ Error: Start or end time missing.");
-                                return;
-                            }
-
-                            const tripRef = collection(firestore, `tripReports/${userId}/trips`);
-                            const formattedPath = path.map(coords => ({ lat: coords[0], lon: coords[1] }));
-                              
-                            const tripData = {
-                                distance: totalDistance.toFixed(2) + " km",
-                                duration: totalDuration.toFixed(2) + " sec",
-                                movingTime: movingDuration.toFixed(2) + " sec",
-                                topSpeed: topSpeed.toFixed(2) + " km/h",
-                                timestamp: new Date().toISOString(),
-                                startTime: startTime.toISOString(),
-                                endTime: endTime.toISOString(), // ✅ Now correctly formatted
-                                tripDate: startTime.toISOString().split("T")[0],
-                                route: formattedPath,
-                            };
-
-                            await addDoc(tripRef, tripData);
-                            alert("✅ Trip report saved to Firestore!");
-                        } catch (error) {
-                            console.error("❌ Error saving to Firestore: ", error);
-                            alert("❌ Failed to save. Check console.");
-                        }
-                    }
-
-              
-                       // Add event listeners after the page loads
-                        document.addEventListener("DOMContentLoaded", () => {
-                            document.getElementById("startButton").addEventListener("click", startTracking);
-                            document.getElementById("endButton").addEventListener("click", endTracking);
-                            document.getElementById("reportButton").addEventListener("click",saveToFirestore);
-                        });
+// Haversine distance function
+function calculateDistance(latlng1, latlng2) {
+    const R = 6371e3;
+    const φ1 = latlng1[0] * Math.PI / 180;
+    const φ2 = latlng2[0] * Math.PI / 180;
+    const Δφ = (latlng2[0] - latlng1[0]) * Math.PI / 180;
+    const Δλ = (latlng2[1] - latlng1[1]) * Math.PI / 180;
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
                         </script>
             
             
