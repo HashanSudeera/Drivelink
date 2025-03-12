@@ -90,6 +90,7 @@ body {
     border: none;
     font: inherit;
     cursor: pointer;
+
 }
 
 #sidebar svg {
@@ -149,6 +150,7 @@ body {
 #toggle-btn:hover {
     background-color: var(--hover-clr);
 }
+
 #toggleSubMenu {
     background-color: var(--hover-clr);
 }
@@ -282,7 +284,7 @@ main p {
     padding: min(1.5em, 15%);
     text-align: center;
     color: #EEEEEE;
-    border-bottom: 1px solid #C4FB6D;
+    border-bottom: 1px solid #dbdbdb;
     padding-bottom: 0px;
     padding-top: 0px;
 
@@ -537,7 +539,7 @@ p {
 }
 
 body {
-    
+
     text-align: center;
     margin: 0;
     padding: 0;
@@ -549,9 +551,11 @@ h1 {
 
 /* Full page map view */
 #map {
-    height: 50vh;  /* Full screen height */
-    width: 100%;    /* Full screen width */
-    
+    height: 50vh;
+    /* Full screen height */
+    width: 100%;
+    /* Full screen width */
+
 }
 
 /* Center button styling */
@@ -563,15 +567,19 @@ h1 {
     cursor: pointer;
     border-radius: 8px;
     font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);  /* Nice shadows */
-    transition: all 0.3s ease-in-out;  /* Smooth transition for hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Nice shadows */
+    transition: all 0.3s ease-in-out;
+    /* Smooth transition for hover */
     font-size: 14px;
     margin: 10px;
 }
 
 .recenter-btn:hover {
-    background: linear-gradient(145deg, #388E3C, #4CAF50); /* Invert the gradient on hover */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);  /* Increase shadow on hover */
+    background: linear-gradient(145deg, #388E3C, #4CAF50);
+    /* Invert the gradient on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Increase shadow on hover */
 }
 
 .recenter-btn:active {
@@ -592,7 +600,7 @@ h1 {
     display: flex;
     justify-content: center;
     justify-items: center;
-   
+
 
     margin-top: 35px;
     padding: 20px;
@@ -600,7 +608,7 @@ h1 {
     display: inline-block;
     border-radius: 8px;
     width: auto;
-    box-shadow: 2px 2px 10px rgba(235, 235, 235, 0.1);
+    box-shadow: 2px 2px 10px rgba(6, 204, 56, 0.1);
 }
 
 button {
@@ -625,8 +633,11 @@ button:nth-child(1) {
 }
 
 button:nth-child(2) {
-    background-color: rgb(255, 0, 0);
+    background-color: rgb(255, 1, 1);
     color: white;
+}
+#startButton{
+     background-color: #039703;
 }
 
 /*trip reort*/
@@ -640,12 +651,12 @@ h1 {
     background: var(--base-clr);
     width: 50%;
     margin-left: 100px;
-    
+
     margin: 20px auto;
     padding: 50px;
     border-radius: 100px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-   
+
 }
 
 /* Trip Data */
@@ -665,8 +676,8 @@ p {
 /* Trip List */
 .trip-report {
     background: var(--base-clr);
-    color : var(--text-clr);
-    
+    color: var(--text-clr);
+
     padding: px;
     margin: 10px 0;
     border-radius: 50px;
@@ -772,10 +783,12 @@ p {
     position: absolute;
     right: 20px;
 }
+
 /* Trip Info Section Responsive Design */
 .tripinfo {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 2fr));
+
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     max-width: 600px;
     margin: 0 auto;
@@ -783,24 +796,41 @@ p {
 }
 
 .card {
-   
+
     display: flex;
-    justify-items: left;
-    background: #2c2c2c;
-    padding: 20px;
-    border-radius: 12px;
-    min-width: 150px;
-    gap: 15px;
    
+    background: #2c2c2c;
+    padding: 10px;
+    border-radius: 12px;
+    min-width: 160px;
+    gap: 10px;
+    align-items: center;
+
+}
+
+.textinfo {
+    color: #00ff00;
+    font-size: 1rem;
+    align-items: start;
+    display: flex;
+    
+
 }
 
 .value {
+    color: #007bff;
+    display: flex;
+    justify-items: center;
     font-size: 1.2rem;
+    align-items: start;
+
 }
 
+
 .icon {
+    
     width: 28px;
-    height: 28px;
+    height: 20px;
 }
 
 @media (max-width: 480px) {
@@ -808,20 +838,25 @@ p {
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 5px;
         display: grid;
-       
+
         gap: 15px;
         max-width: 500px;
         margin: 0 auto;
         padding: 10px;
-        
+
     }
+
     .card {
-        padding: 12px;
+        
+        padding: 10px;
         min-width: 10px;
     }
+
     .value {
+        
         font-size: 1.1rem;
     }
+
     .icon {
         width: 24px;
         height: 24px;
