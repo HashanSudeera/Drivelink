@@ -589,12 +589,18 @@ h1 {
 }
 
 .info {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+   
+
     margin-top: 35px;
     padding: 20px;
-    background: #030303;
+    background: #181818;
     display: inline-block;
     border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    width: auto;
+    box-shadow: 2px 2px 10px rgba(235, 235, 235, 0.1);
 }
 
 button {
@@ -765,4 +771,59 @@ p {
     height: 40px;
     position: absolute;
     right: 20px;
+}
+/* Trip Info Section Responsive Design */
+.tripinfo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 2fr));
+    gap: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.card {
+   
+    display: flex;
+    justify-items: left;
+    background: #2c2c2c;
+    padding: 20px;
+    border-radius: 12px;
+    min-width: 150px;
+    gap: 15px;
+   
+}
+
+.value {
+    font-size: 1.2rem;
+}
+
+.icon {
+    width: 28px;
+    height: 28px;
+}
+
+@media (max-width: 480px) {
+    .tripinfo {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 5px;
+        display: grid;
+       
+        gap: 15px;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 10px;
+        
+    }
+    .card {
+        padding: 12px;
+        min-width: 10px;
+    }
+    .value {
+        font-size: 1.1rem;
+    }
+    .icon {
+        width: 24px;
+        height: 24px;
+    }
 }
