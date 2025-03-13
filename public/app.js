@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     // Call additional functions
                     loadSensorData(deviceId);
                 } catch (error) {
-                    console.error("Error fetching data:", error);
+                   
                 }
             } else {
                 // Redirect if user is not logged in

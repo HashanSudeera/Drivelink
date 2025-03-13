@@ -150,127 +150,179 @@
         <div class="title-container">
             <h1>Drive<span class="highlight">Link</span></h1>
             <p>Trip Manage</p>
-            <span id="device-id"></span>
+            
 
         </div>
         <div></div>
-        <h2>Live Tracking</h2>
-        <div id="map"></div>
+            <!-- <h2>Live Tracking - <span id="device-id"></span></h2> -->
+            <div id="map"></div>
         </div>
-        <div class="info">
-            <div class="tripinfo">
-                <div class="card">
-                    <img src="icon/distance.svg" class="icon" alt="Distance Icon">
-                    <div>
-                        <span class="infotext">Distance</span><br>
+            <div class="info">
+                <div class="tripinfo">
+                    <div class="card">
+                        <img src="icon/distance.svg" class="icon" alt="Distance Icon">
+                        <div>
+                            <span class="infotext">Distance</span><br>
 
-                        <span class="value" id="distance">0.00 km</span>
+                            <span class="value" id="distance">0.00 km</span>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <img src="icon/total_duration.svg" class="icon" alt="Total Duration Icon">
-                    <div>
-                        <span class="infotext">Total duration</span><br>
-                        <span class="value" id="duration">00:00</span>
+                    <div class="card">
+                        <img src="icon/total_duration.svg" class="icon" alt="Total Duration Icon">
+                        <div>
+                            <span class="infotext">Total duration</span><br>
+                            <span class="value" id="duration">00:00</span>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <img src="icon/speed.svg" class="icon" alt="Speed Icon">
-                    <div>
-                        <span class="infotext">Speed</span><br>
-                        <span class="value" id="speed">0.0 mph</span>
+                    <div class="card">
+                        <img src="icon/speed.svg" class="icon" alt="Speed Icon">
+                        <div>
+                            <span class="infotext">Speed</span><br>
+                            <span class="value" id="speed">0.0 mph</span>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <img src="icon/total_duration.svg" class="icon" alt="Drive Duration Icon">
-                    <div>
-                        <span class="infotext">Drive duration</span><br>
-                        <span class="value" id="movingTime">00:00</span>
+                    <div class="card">
+                        <img src="icon/total_duration.svg" class="icon" alt="Drive Duration Icon">
+                        <div>
+                            <span class="infotext">Drive duration</span><br>
+                            <span class="value" id="movingTime">00:00</span>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <img src="icon/top_speed.svg" class="icon" alt="Top Speed Icon">
-                    <div>
-                        <span class="infotext">Top speed</span><br>
-                        <span class="value" id="topSpeed">0.0 mph</span>
+                    <div class="card">
+                        <img src="icon/top_speed.svg" class="icon" alt="Top Speed Icon">
+                        <div>
+                            <span class="infotext">Top speed</span><br>
+                            <span class="value" id="topSpeed">0.0 mph</span>
+                        </div>
                     </div>
-                </div>
-                <div class="card">
-                    <img src="icon/satellite.svg" class="icon" alt="Region Icon">
-                    <div>
-                        <span class="infotext">satellite</span><br>
-                        <span class="value" id="satellites">0</span>
+                    <div class="card">
+                        <img src="icon/satellite.svg" class="icon" alt="Region Icon">
+                        <div>
+                            <span class="infotext">satellite</span><br>
+                            <span class="value" id="satellites">0</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/satellite.svg" class="icon" alt="Region Icon">
+                        <div>
+                            <span class="infotext">Fuel Used</span><br>
+                            <span class="value" id="fuelUsed">0</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/satellite.svg" class="icon" alt="Region Icon">
+                        <div>
+                            <span class="infotext">Cost</span><br>
+                            <span class="value" id="fuelCost">0</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/satellite.svg" class="icon" alt="Region Icon">
+                        <div>
+                            <span class="infotext">Consumption</span><br>
+                            <span class="value" id="consumptionRate">0</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <br>
-        <br>
-        <div class="buttons">
-            <button id="startButton">Start</button>
-            <button id="endButton" disabled>End</button>
-            <button id="reportButton" disabled>Generate Report</button>
             <br>
             <br>
+            <div class="buttons">
+                <button id="startButton">Start</button>
+                <button id="endButton" disabled>End</button>
+                <button id="reportButton" disabled>Generate Report</button>
+                <br>
+                <br>
 
-        </div>
+            </div>
 
-        <script type="module">
-            // Import necessary Firebase modules
-            // Import necessary Firebase modules
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-            import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+            <script type="module">
+                // Import necessary Firebase modules
+                // Import necessary Firebase modules
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+                import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+                import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+                import { get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+                import { set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+                import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-            const app = initializeApp(firebaseConfig);
-            const firestore = getFirestore(app);
-            const db = getDatabase(app);
-            const userId = localStorage.getItem("deviceId");
+                document.addEventListener("DOMContentLoaded", () => {
+                // Initialize Firebase
+               
 
-            // Initialize map
-            let map = L.map('map').setView([0, 0], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            let marker = L.marker([0, 0]).addTo(map);
-            let polyline = L.polyline([], { color: 'red' }).addTo(map);
+                const app = initializeApp(firebaseConfig);
+                const firestore = getFirestore(app);
+                const db = getDatabase(app);
+                const userId = localStorage.getItem("deviceId");
 
-            // Custom markers
-            const startIcon = L.icon({
-                iconUrl: 'start-marker.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41]
-            });
-            const endIcon = L.icon({
-                iconUrl: 'end-marker.png',
-                iconSize: [2, 41],
-                iconAnchor: [12, 41]
-            });
-            const stopIcon = L.icon({
-                iconUrl: 'stop-marker.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41]
-            });
+                if (!userId) {
+                    console.error("User ID not found in localStorage");
+                    return;
+                }
 
-            // Tracking variables
-            let trackingActive = false;
-            let startTime = null, endTime = null;
-            let totalDistance = 0, totalDuration = 0, movingDuration = 0, topSpeed = 0;
-            let path = [];
-            let stopStartTime = null;
-            let startMarker, endMarker;
-            let stopMarkers = [];
+                // Initialize map
+                let map = L.map('map').setView([0, 0], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                let marker = L.marker([0, 0]).addTo(map);
+                let polyline = L.polyline([], { color: 'red' }).addTo(map);
 
-            // Start tracking
-            document.addEventListener("DOMContentLoaded", () => {
+                // Custom markers
+                const startIcon = L.icon({ iconUrl: 'start-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+                const endIcon = L.icon({ iconUrl: 'end-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+                const stopIcon = L.icon({ iconUrl: 'stop-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+
+                // Tracking variables
+                let trackingActive = false;
+                let startTime = null, endTime = null;
+                let totalDistance = 0, totalDuration = 0, movingDuration = 0, topSpeed = 0;
+                let path = [];
+                let stopStartTime = null;
+                let startMarker, endMarker;
+                let stopPoints = []; // Initialize stopPoints array
+                let stopMarkers = [];
+                let initialFuel = 0, fuelUsed = 0;
+                const fuelCostPerLitre = 250;
+
+                const fuelUsedElement = document.getElementById('fuelUsed');
+                const fuelCostElement = document.getElementById('fuelCost');
+                const consumptionRateElement = document.getElementById('consumptionRate');
+
+                if (!fuelUsedElement || !fuelCostElement || !consumptionRateElement) {
+                    console.error("Fuel-related elements not found in the DOM");
+                    return;
+                }
+
+                // Fetch initial fuel value once
+                async function getInitialFuel() {
+                    try {
+                        const fuelSnapshot = await get(ref(db, `${userId}/fuel_sensor/value`));
+                        if (fuelSnapshot.exists()) {
+                            initialFuel = parseFloat(fuelSnapshot.val());
+                            if (isNaN(initialFuel)) {
+                                console.error("Invalid initial fuel value");
+                                initialFuel = 0;
+                            }
+                            console.log('Initial Fuel Loaded:', initialFuel);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching initial fuel:', error);
+                    }
+                }
+
+                // Start tracking
                 const startButton = document.getElementById("startButton");
                 const endButton = document.getElementById("endButton");
                 const reportButton = document.getElementById("reportButton");
 
                 if (startButton) {
-                    startButton.addEventListener("click", () => {
+                    startButton.addEventListener("click", async () => {
+                        await getInitialFuel();
                         trackingActive = true;
                         startTime = new Date();
+                        fuelUsed = 0; // Reset fuel used
                         startButton.disabled = true;
                         endButton.disabled = false;
+                        console.log('Started tracking. Initial Fuel:', initialFuel);
                     });
                 }
 
@@ -280,6 +332,7 @@
                         endTime = new Date();
                         endButton.disabled = true;
                         reportButton.disabled = false;
+                        console.log('Stopped tracking. Fuel Used:', fuelUsed);
 
                         // Mark end point
                         if (!endMarker) {
@@ -294,96 +347,130 @@
                             if (!startTime || !endTime) return alert("Start or end time missing.");
 
                             const tripData = {
-                                distance: totalDistance.toFixed(2) + " km",
-                                duration: ((endTime - startTime) / 1000 / 60).toFixed(2) + " min",
-                                movingTime: movingDuration.toFixed(2) + " min",
-                                topSpeed: topSpeed.toFixed(2) + " km/h",
-                                startTime: startTime.toISOString(),
-                                endTime: endTime.toISOString(),
+                                distance: totalDistance.toFixed(2),
+                                duration: ((endTime - startTime) / 1000 / 60).toFixed(2),
+                                movingTime: movingDuration.toFixed(2),
+                                topSpeed: topSpeed.toFixed(2),
+                                startTime: startTime.toLocaleTimeString(), // Only time
+                                endTime: endTime.toLocaleTimeString(), // Only time
                                 tripDate: startTime.toISOString().split("T")[0],
                                 route: path.map(coords => ({ lat: coords[0], lon: coords[1] })),
-                                stopPoints: stopMarkers.map(marker => marker.getLatLng()),
+                                stopPoints: stopPoints, // Use the stopPoints array
                                 startPoint: path[0],
-                                endPoint: path[path.length - 1]
-
+                                endPoint: path[path.length - 1],
+                                fuelUsed: fuelUsed.toFixed(2),
+                                fuelCost: (fuelUsed * fuelCostPerLitre).toFixed(2),
+                                consumptionRate: ((fuelUsed / totalDistance) * 100).toFixed(2)
                             };
+
                             await addDoc(collection(firestore, `tripReports/${userId}/trips`), tripData);
                             alert("Trip saved to Firestore!");
+                            location.reload();
                         } catch (error) {
                             console.error("Error saving trip: ", error);
                         }
                     });
                 }
-            });
 
-            // Listen to GPS data from Firebase
-            const userRef = ref(db, `${userId}/tracking`);
-            onValue(userRef, (snapshot) => {
-                if (!snapshot.exists()) return;
-
-                const data = snapshot.val();
-                let newPos = [data.latitude, data.longitude];
-
-                if (trackingActive) {
-                    // Mark start point
-                    if (!startMarker) {
-                        startMarker = L.marker(newPos, { icon: startIcon }).addTo(map);
+                // Listen to GPS data from Firebase
+                const userRef = ref(db, `${userId}/tracking`);
+                onValue(userRef, (snapshot) => {
+                    if (!snapshot.exists()) {
+                        console.error("No data found in Firebase");
+                        return;
                     }
 
-                    let lastPos = path[path.length - 2];
-                    if (lastPos) totalDistance += calculateDistance(lastPos, newPos);
+                    const data = snapshot.val();
+                    let newPos = [data.latitude, data.longitude];
 
-                    path.push(newPos);
-                    polyline.setLatLngs(path);
+                    if (trackingActive) {
+                        // Mark start point
+                        if (!startMarker) {
+                            startMarker = L.marker(newPos, { icon: startIcon }).addTo(map);
+                        }
 
+                        let lastPos = path[path.length - 2];
+                        if (lastPos) totalDistance += calculateDistance(lastPos, newPos);
 
-                    let currentTime = new Date().getTime();
+                        path.push(newPos);
+                        polyline.setLatLngs(path);
 
-                    if (data.speed > 5) movingDuration = totalDuration;
-                    if (data.speed > topSpeed) topSpeed = data.speed;
+                        let currentTime = new Date().getTime();
 
-                    // Stop detection
-                    if (data.speed < 1) {
-                        if (!stopStartTime) stopStartTime = new Date();
-                        let elapsedTime = (new Date() - stopStartTime) / 60000;
-                        if (elapsedTime >= 1) {
-                            let stopMarker = L.marker(newPos, { icon: stopIcon }).addTo(map);
-                            stopMarkers.push(stopMarker);
+                        if (data.speed > 5) movingDuration = totalDuration;
+                        if (data.speed > topSpeed) topSpeed = data.speed;
+
+                        // Stop detection
+                        if (data.speed < 1) {
+                            if (!stopStartTime) stopStartTime = new Date();
+                            let elapsedTime = (new Date() - stopStartTime) / 60000;
+                            if (elapsedTime >= 1) {
+                                let stopMarker = L.marker(newPos, { icon: stopIcon }).addTo(map);
+                                stopMarkers.push(stopMarker);
+
+                                // Add stop point to the stopPoints array
+                                stopPoints.push({
+                                    lat: newPos[0],
+                                    lon: newPos[1],
+                                    
+                                });
+
+                                stopStartTime = null;
+                            }
+                        } else {
                             stopStartTime = null;
                         }
-                    } else {
-                        stopStartTime = null;
                     }
+
+                    // Update UI in real-time
+                    document.getElementById("speed").innerText = data.speed ? data.speed.toFixed(2) + " km/h" : "N/A";
+                    document.getElementById("distance").innerText = totalDistance.toFixed(2) + " km";
+                    document.getElementById("duration").innerText = startTime ? ((new Date() - startTime) / 1000 / 60).toFixed(2) + " min" : "0 min";
+                    document.getElementById("movingTime").innerText = movingDuration.toFixed(2) + " min";
+                    document.getElementById("topSpeed").innerText = topSpeed.toFixed(2);
+                    document.getElementById("satellites").innerText = data.satellites || "N/A";
+
+                    marker.setLatLng(newPos);
+                    map.setView(newPos);
+                });
+
+                // Listen for Fuel updates
+                onValue(ref(db, `${userId}/fuel_sensor/value`), (snapshot) => {
+                    if (trackingActive && snapshot.exists()) {
+                        const currentFuel = parseFloat(snapshot.val());
+                        fuelUsed = initialFuel - currentFuel;
+
+                        // Update fuel-related UI
+                        fuelUsedElement.textContent = fuelUsed.toFixed(2) + " L"; // Fuel used in liters
+                        fuelCostElement.textContent = "Rs. " + (fuelUsed * fuelCostPerLitre).toFixed(2); // Fuel cost in currency
+
+                        // Calculate fuel consumption rate (L/100 km)
+                        if (totalDistance > 0) {
+                            const consumptionRate = (fuelUsed / totalDistance) * 100; // L/100 km
+                            consumptionRateElement.textContent = consumptionRate.toFixed(2) + " L/100 km";
+                        } else {
+                            consumptionRateElement.textContent = "0.00 L/100 km"; // Default value if distance is zero
+                        }
+                    }
+                });
+
+                // Haversine distance function
+                function calculateDistance(latlng1, latlng2) {
+                    const R = 6371; // Earth's radius in km
+                    const dLat = (latlng2[0] - latlng1[0]) * Math.PI / 180;
+                    const dLon = (latlng2[1] - latlng1[1]) * Math.PI / 180;
+                    const a =
+                        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(latlng1[0] * Math.PI / 180) * Math.cos(latlng2[0] * Math.PI / 180) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    return R * c; // Distance in km
                 }
-
-                // Update UI in real-time
-                document.getElementById("speed").innerText = data.speed.toFixed(2) + " km/h";
-                document.getElementById("distance").innerText = totalDistance.toFixed(2) + " km";
-                document.getElementById("duration").innerText = ((new Date() - startTime) / 1000 / 60).toFixed(2) + " min" || "0";
-                document.getElementById("movingTime").innerText = movingDuration.toFixed(2) + " min";
-                document.getElementById("topSpeed").innerText = topSpeed.toFixed(2);
-                document.getElementById("satellites").innerText = data.satellites || "N/A";
-
-                marker.setLatLng(newPos);
-                map.setView(newPos);
             });
-
-            // Haversine distance function
-            function calculateDistance(latlng1, latlng2) {
-                const R = 6371; // Earth's radius in km
-                const dLat = (latlng2[0] - latlng1[0]) * Math.PI / 180;
-                const dLon = (latlng2[1] - latlng1[1]) * Math.PI / 180;
-                const a =
-                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(latlng1[0] * Math.PI / 180) * Math.cos(latlng2[0] * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return R * c; // Distance in km
-            }
-        </script>
+    </script>
 
 
-
+        
     </main>
 
 

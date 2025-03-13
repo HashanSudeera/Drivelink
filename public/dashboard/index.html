@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Trip Report</title>
     <link rel="stylesheet" href="dashboardstyle.css">
-    
-    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="../app.js"></script>
     <script src="dashboard.js" defer></script>
+   
 </head>
 
 <body id="dashboardPage">
@@ -67,7 +67,16 @@
                 </a>
             </li>
             
-            
+            <li>
+                <a href="tripmange.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+                        fill="#e3e3e3">
+                        <path
+                            d="M300-300l280-80 80-280-280 80-80 280zm180-120q-25 0-42.5-17.5T420-480q0-25 17.5-42.5T480-540q25 0 42.5 17.5T540-480q0 25-17.5 42.5T480-420zm0 340q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80zm0-80q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160zm0-320z" />
+                    </svg>
+                    <span>Trip Manage</span>
+                </a>
+            </li>
             <li>
                 <a href="vehicalhelth.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
@@ -108,72 +117,132 @@
             </li>
         </ul>
     </nav>
-
-    <!-- ======================================================================================================================-->
     <main>
-        <div class="title-container">
-            <h1>Drive<span class="highlight">Link</span></h1>
-            <p>Trip Reports</p>
-        </div>
-        <div>
-            <script type="module">
+        <script>
             import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-            import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-            
+            import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+            import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+            // Initialize Firebase
+           
+
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            
-            const deviceId = localStorage.getItem("deviceId");
-            console.log(deviceId);
-            
-            async function loadTripReports() {
-                const tripRef = collection(db, `tripReports/${deviceId}/trips`);
-                const tripQuery = query(tripRef, orderBy("tripDate", "desc")); // Sort by tripDate (newest first)
-                const snapshot = await getDocs(tripQuery);
-                const tripContainer = document.getElementById("tripList");
-                tripContainer.innerHTML = ""; // Clear previous entries
-                let tripNumber = 1;
-            
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const tripElement = document.createElement("div");
-                    tripElement.classList.add("trip-report");
-                    tripElement.innerHTML = `
-                        <h2>Trip ${tripNumber} - ${data.tripDate}</h2>
-                        <p><strong>Distance:</strong> ${data.distance}</p>
-                        <p><strong>Duration:</strong> ${data.duration}</p>
-                        <p><strong>Top Speed:</strong> ${data.topSpeed}</p>
-                        <p><strong>Moving Time:</strong> ${data.movingTime}</p>
-                        <p><strong>Start Time:</strong> ${data.startTime}</p>
-                        <p><strong>End Time:</strong> ${data.endTime}</p>
-                    `;
-                    tripElement.addEventListener("click", () => {
-                        window.location.href = `trip_details.html?tripId=${doc.id}`;
-                    });
-                    tripContainer.appendChild(tripElement);
-                    tripNumber++;
-                });
-            }
-            
-            window.onload = loadTripReports;
-            
-            </script>
-            <style>
-                .trip-report {
-                    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
-                    
-                    padding: 20px;
-                    margin: 10px;
-                    cursor: pointer;
-                    
+
+            async function loadTripData() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const tripId = urlParams.get("tripId");
+                const deviceId = localStorage.getItem("deviceId");
+
+                if (!tripId || !deviceId) {
+                    console.error("Trip ID or Device ID not found!");
+                    return;
                 }
-            </style>
-            <h1><span id="device-id">--</span>'s Trip Reports</h1>
-            <div id="tripList"></div>
+
+                const tripRef = doc(db, `tripReports/${deviceId}/trips`, tripId);
+                const snapshot = await getDoc(tripRef);
+
+                if (snapshot.exists()) {
+                    const data = snapshot.data();
+                    console.log("Fetched Data:", data);
+
+                    // Update trip details in the card layout
+                    document.getElementById("tripDate").innerText = data.tripDate || "N/A";
+            document.getElementById("startTime").innerText = data.startTime || "N/A";
+            document.getElementById("endTime").innerText = data.endTime || "N/A";
+            document.getElementById("duration").innerText = data.duration || "N/A";
+            document.getElementById("distance").innerText = data.distance || "N/A";
+            document.getElementById("topSpeed").innerText = data.topSpeed || "N/A";
+                    // Update the trip title
+                    const tripNumber = tripId; // Replace with actual trip number logic if available
+                    document.querySelector(".title-container h2").innerText = `Trip ${tripNumber} - ${data.tripDate}`;
+
+                    // Initialize map
+                    if (data.route && data.route.length > 0) {
+                        const map = L.map('map').setView([data.route[0].lat, data.route[0].lon], 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+                        const latLngs = data.route.map(point => [point.lat, point.lon]);
+                        L.polyline(latLngs, { color: 'blue' }).addTo(map);
+                    } else {
+                        console.error("No route data found!");
+                    }
+                } else {
+                    console.log("No trip found with ID:", tripId);
+                }
+            }
+
+            window.onload = () => {
+                if (typeof L === "undefined") {
+                    console.error("Leaflet failed to load!");
+                    return;
+                }
+
+                if (!document.getElementById("map")) {
+                    console.error("Map container not found!");
+                    return;
+                }
+
+                loadTripData();
+            };
+
+        </script>
+        <div class="title-container">
+            <h2>Trip ${tripNumber} - ${data.tripDate}</h2>
+            <p>Trip Reports</p>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="info">
+            <div class="tripinfo">
+                <div class="card">
+                    <img src="icon/distance.svg" class="icon" alt="Distance Icon">
+                    <div>
+                        <span class="infotext">Distance</span><br>
+                        <span class="value" id="distance">0.00 km</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="icon/total_duration.svg" class="icon" alt="Total Duration Icon">
+                    <div>
+                        <span class="infotext">Total Duration</span><br>
+                        <span class="value" id="duration">00:00</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="icon/speed.svg" class="icon" alt="Speed Icon">
+                    <div>
+                        <span class="infotext">Speed</span><br>
+                        <span class="value" id="speed">0.0 mph</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="icon/total_duration.svg" class="icon" alt="Drive Duration Icon">
+                    <div>
+                        <span class="infotext">Drive Duration</span><br>
+                        <span class="value" id="movingTime">00:00</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="icon/top_speed.svg" class="icon" alt="Top Speed Icon">
+                    <div>
+                        <span class="infotext">Top Speed</span><br>
+                        <span class="value" id="topSpeed">0.0 mph</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="icon/satellite.svg" class="icon" alt="Satellite Icon">
+                    <div>
+                        <span class="infotext">Satellite</span><br>
+                        <span class="value" id="satellites">0</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 
 </html>

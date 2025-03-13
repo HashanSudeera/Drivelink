@@ -7,10 +7,10 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="dashboardstyle.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    
-   
     <script src="../app.js"></script>
     <script src="dashboard.js" defer></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body id="dashboardPage">
@@ -220,12 +220,56 @@
         <div id="map" style="width: 100%; height: 400px;"></div>
     
         <div id="tripList"></div>
-        <p><strong>Date:</strong> <span id="tripDate"></span></p>
-        <p><strong>Start Time:</strong> <span id="startTime"></span></p>
-        <p><strong>End Time:</strong> <span id="endTime"></span></p>
-        <p><strong>Total Duration:</strong> <span id="duration"></span></p>
-        <p><strong>Total Distance:</strong> <span id="distance"></span></p>
-        <p><strong>Top Speed:</strong> <span id="topSpeed"></span></p>
+            <div class="info">
+                <div class="tripinfo">
+                    <div class="card">
+                        <img src="icon/distance.svg" class="icon" alt="Distance Icon">
+                        <div>
+                            <span class="infotext">Distance</span><br>
+
+                            <span class="value" id="distance">0.00 km</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/total_duration.svg" class="icon" alt="Total Duration Icon">
+                        <div>
+                            <span class="infotext">Total duration</span><br>
+                            <span class="value" id="duration">00:00</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/speed.svg" class="icon" alt="Speed Icon">
+                        <div>
+                            <span class="infotext">Speed</span><br>
+                            <span class="value" id="speed">0.0 mph</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/total_duration.svg" class="icon" alt="Drive Duration Icon">
+                        <div>
+                            <span class="infotext">Drive duration</span><br>
+                            <span class="value" id="movingTime">00:00</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/top_speed.svg" class="icon" alt="Top Speed Icon">
+                        <div>
+                            <span class="infotext">Top speed</span><br>
+                            <span class="value" id="topSpeed">0.0 mph</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img src="icon/satellite.svg" class="icon" alt="Region Icon">
+                        <div>
+                            <span class="infotext">satellite</span><br>
+                            <span class="value" id="satellites">0</span>
+                        </div>
+                    </div>
+                </div>
+        
+
+                <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+                <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         </div>
     </main>
