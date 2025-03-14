@@ -143,13 +143,20 @@
             </li>
         </ul>
     </nav>
+    <!-- Blur Overlay -->
+    <div id="blurOverlay" class="blur-overlay"></div>
+    <div id="toast" class="toast">
+        <span id="toastMessage">DriveLink</span>
+    </div>
 
     <!-- ======================================================================================================================-->
     <main>
 
         <div class="title-container">
-            <h1>Drive<span class="highlight">Link</span></h1>
+            <h1><span class="highlight">Drive</span>Link</h1>
+
             <p>Trip Manage</p>
+            
             
 
         </div>
@@ -224,17 +231,26 @@
                         </div>
                     </div>
                 </div>
+                <div id="infodata">
+                <input type="text" id="tripName" placeholder="Enter trip name">
+            
+                   
+                    
+                    <div class="buttons">
+                        <button id="startButton">Start</button>
+                        <button id="endButton" disabled>End</button>
+                        <button id="reportButton" disabled>Generate Report</button>
+                        <br>
+                        <br>
+        
+                    </div>
+                </div>
             </div>
             <br>
             <br>
-            <div class="buttons">
-                <button id="startButton">Start</button>
-                <button id="endButton" disabled>End</button>
-                <button id="reportButton" disabled>Generate Report</button>
-                <br>
-                <br>
-
-            </div>
+           
+            
+           
 
             <script type="module">
                 // Import necessary Firebase modules
@@ -254,7 +270,19 @@
                 const firestore = getFirestore(app);
                 const db = getDatabase(app);
                 const userId = localStorage.getItem("deviceId");
+                
+                const tripNameInput = document.getElementById("tripName");
+                const tripDescriptionInput = document.getElementById("tripDescription");
 
+                if (tripNameInput && tripDescriptionInput) {
+                    tripNameInput.addEventListener("input", () => {
+                        document.getElementById("tripNameDisplay").textContent = tripNameInput.value || "--";
+                    });
+
+                    tripDescriptionInput.addEventListener("input", () => {
+                        document.getElementById("tripDescriptionDisplay").textContent = tripDescriptionInput.value || "--";
+                    });
+                }
                 if (!userId) {
                     console.error("User ID not found in localStorage");
                     return;
@@ -278,7 +306,7 @@
                 let path = [];
                 let stopStartTime = null;
                 let startMarker, endMarker;
-                let stopPoints = []; // Initialize stopPoints array
+                   let stopPoints = []; // Initialize stopPoints array
                 let stopMarkers = [];
                 let initialFuel = 0, fuelUsed = 0;
                 const fuelCostPerLitre = 250;
@@ -322,6 +350,7 @@
                         fuelUsed = 0; // Reset fuel used
                         startButton.disabled = true;
                         endButton.disabled = false;
+                        showToast("Start Trip");
                         console.log('Started tracking. Initial Fuel:', initialFuel);
                     });
                 }
@@ -330,6 +359,7 @@
                     endButton.addEventListener("click", () => {
                         trackingActive = false;
                         endTime = new Date();
+                        showToast("End Trip");
                         endButton.disabled = true;
                         reportButton.disabled = false;
                         console.log('Stopped tracking. Fuel Used:', fuelUsed);
@@ -342,36 +372,48 @@
                 }
 
                 if (reportButton) {
-                    reportButton.addEventListener("click", async () => {
-                        try {
-                            if (!startTime || !endTime) return alert("Start or end time missing.");
+                reportButton.addEventListener("click", async () => {
+                    try {
+                        if (!startTime || !endTime) return alert("Start or end time missing.");
 
-                            const tripData = {
-                                distance: totalDistance.toFixed(2),
-                                duration: ((endTime - startTime) / 1000 / 60).toFixed(2),
-                                movingTime: movingDuration.toFixed(2),
-                                topSpeed: topSpeed.toFixed(2),
-                                startTime: startTime.toLocaleTimeString(), // Only time
-                                endTime: endTime.toLocaleTimeString(), // Only time
-                                tripDate: startTime.toISOString().split("T")[0],
-                                route: path.map(coords => ({ lat: coords[0], lon: coords[1] })),
-                                stopPoints: stopPoints, // Use the stopPoints array
-                                startPoint: path[0],
-                                endPoint: path[path.length - 1],
-                                fuelUsed: fuelUsed.toFixed(2),
-                                fuelCost: (fuelUsed * fuelCostPerLitre).toFixed(2),
-                                consumptionRate: ((fuelUsed / totalDistance) * 100).toFixed(2)
-                            };
+                        // Get trip name from input field
+                        const tripName = document.getElementById("tripName").value.trim();
+                        console.log("Trip Name:", tripName); // Debugging: Log the trip name
 
-                            await addDoc(collection(firestore, `tripReports/${userId}/trips`), tripData);
-                            alert("Trip saved to Firestore!");
-                            location.reload();
-                        } catch (error) {
-                            console.error("Error saving trip: ", error);
-                        }
-                    });
-                }
+                        const tripData = {
+                            timestamp:timestamp,
+                            tripName: tripName || "", // Use "Unnamed Trip" if no name is provided
+                            distance: totalDistance.toFixed(2),
+                            duration: ((endTime - startTime) / 1000 / 60).toFixed(2),
+                            movingTime: movingDuration.toFixed(2),
+                            topSpeed: topSpeed.toFixed(2),
+                            startTime: startTime.toLocaleTimeString(),
+                            endTime: endTime.toLocaleTimeString(),
+                            tripDate: startTime.toISOString().split("T")[0],
+                            route: path.map(coords => ({ lat: coords[0], lon: coords[1] })),
+                            stopPoints: stopPoints,
+                            startPoint: path[0],
+                            endPoint: path[path.length - 1],
+                            fuelUsed: fuelUsed.toFixed(2),
+                            fuelCost: (fuelUsed * fuelCostPerLitre).toFixed(2),
+                            consumptionRate: ((fuelUsed / totalDistance) * 100).toFixed(2)
+                        };
 
+                        console.log("Trip Data:", tripData); // Debugging: Log the trip data
+
+                        await addDoc(collection(firestore, `tripReports/${userId}/trips`), tripData);
+                        
+                        showToast("Trip saved to FirestoreFDS!");
+                        
+        
+                        location.reload();
+                    } catch (error) {
+                        showToast("Error saving trip: ", error);
+                        console.error("Error saving trip: ", error);
+                    }
+                });
+            }
+            
                 // Listen to GPS data from Firebase
                 const userRef = ref(db, `${userId}/tracking`);
                 onValue(userRef, (snapshot) => {
@@ -412,7 +454,7 @@
                                 stopPoints.push({
                                     lat: newPos[0],
                                     lon: newPos[1],
-                                    
+                                    timestamp: new Date().toISOString()
                                 });
 
                                 stopStartTime = null;

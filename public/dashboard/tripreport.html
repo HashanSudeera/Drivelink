@@ -66,6 +66,16 @@
                     <span>Live Tracking</span>
                 </a>
             </li>
+            <li>
+                <a href="tripmange.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+                        fill="#e3e3e3">
+                        <path
+                            d="M300-300l280-80 80-280-280 80-80 280zm180-120q-25 0-42.5-17.5T420-480q0-25 17.5-42.5T480-540q25 0 42.5 17.5T540-480q0 25-17.5 42.5T480-420zm0 340q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80zm0-80q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160zm0-320z" />
+                    </svg>
+                    <span>Trip Manage</span>
+                </a>
+            </li>
             
             
             <li>
@@ -108,11 +118,16 @@
             </li>
         </ul>
     </nav>
+    <!-- Blur Overlay -->
+    <div id="blurOverlay" class="blur-overlay"></div>
+    <div id="toast" class="toast">
+        <span id="toastMessage">DriveLink</span>
+    </div>
 
     <!-- ======================================================================================================================-->
     <main>
         <div class="title-container">
-            <h1>Drive<span class="highlight">Link</span></h1>
+            <h1><span class="highlight">Drive</span>Link</h1>
             <p>Trip Reports</p>
         </div>
         <div>
@@ -139,7 +154,7 @@
                     const tripElement = document.createElement("div");
                     tripElement.classList.add("trip-report");
                     tripElement.innerHTML = `
-                        <h2>Trip ${tripNumber} - ${data.tripDate}</h2>
+                        <h2>Trip ${tripNumber} - ${data.tripName} - ${data.tripDate}</h2>
                         <p><strong>Distance:</strong> ${data.distance}</p>
                         <p><strong>Duration:</strong> ${data.duration}</p>
                         <p><strong>Top Speed:</strong> ${data.topSpeed}</p>

@@ -67,12 +67,13 @@ function register(event) {
 
     // Basic validation
     if (!username || !email || !password || !confirmPassword || !deviceId) {
-        alert("Please fill in all required fields.");
+        showToast("Please fill in all required fields.");
         return;
     }
 
     if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+        
+        showToast("Passwords do not match!");
         return;
     }
 
@@ -97,12 +98,12 @@ function register(event) {
         })
         .then(() => {
             console.log("User data saved to Firestore.");
-            alert("Registration successful! Redirecting to login...");
+            showToast("Registration successful! Redirecting to login...");
             window.location.href = "login.html"; // Redirect to login page
         })
         .catch((error) => {
             console.error("Registration error:", error.message);
-            alert("Registration failed: " + error.message);
+            showToast("Registration failed: " + error.message);
         });
 }
 
@@ -116,7 +117,7 @@ function loginUser(event) {
 
     // Validation
     if (!email || !password) {
-        alert("Please enter both email and password.");
+        showToast("Please enter both email and password.");
         return;
     }
 
@@ -125,12 +126,12 @@ function loginUser(event) {
         .then((userCredential) => {
             const user = userCredential.user;
             console.log("User logged in:", user.uid);
-            alert("Login successful! Redirecting...");
+            showToast("Login successful! Redirecting...");
             window.location.href = "dashboard/dashboard.html"; // Redirect after login
         })
         .catch((error) => {
             console.error("Login error:", error.message);
-            alert("Login failed: " + error.message);
+            showToast("Login failed: " + error.message);
         });
 }
 let min_value = null;
@@ -196,7 +197,84 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 });
+// Function to show the toast notification
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toastMessage");
+    const blurOverlay = document.getElementById("blurOverlay");
 
+    if (!toast || !toastMessage || !blurOverlay) {
+        console.error("Toast or blur overlay elements not found in the DOM");
+        return;
+    }
+
+    // Set the toast message
+    toastMessage.textContent = message;
+
+    // Show the toast and blur overlay
+    toast.classList.add("show");
+    document.body.classList.add("blurred"); // Add blur to the entire page
+    blurOverlay.style.display = "block"; // Show the blur overlay
+
+    // Hide the toast and blur overlay after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+        document.body.classList.remove("blurred"); // Remove blur from the entire page
+        blurOverlay.style.display = "none"; // Hide the blur overlay
+    }, 2000); // 3 seconds
+}
+
+
+// Fetch initial fuel value once
+async function getInitialFuel() {
+    try {
+        const fuelSnapshot = await get(ref(db, `${userId}/fuel_sensor/value`));
+        if (fuelSnapshot.exists()) {
+            initialFuel = parseFloat(fuelSnapshot.val());
+            if (isNaN(initialFuel)) {
+                console.error("Invalid initial fuel value");
+                initialFuel = 0;
+            }
+            console.log('Initial Fuel Loaded:', initialFuel);
+        }
+    } catch (error) {
+        console.error('Error fetching initial fuel:', error);
+    }
+}
+
+// Start tracking
+const startButton = document.getElementById("startButton");
+const endButton = document.getElementById("endButton");
+const reportButton = document.getElementById("reportButton");
+
+if (startButton) {
+    startButton.addEventListener("click", async () => {
+        await getInitialFuel();
+        trackingActive = true;
+        startTime = new Date();
+        fuelUsed = 0; // Reset fuel used
+        startButton.disabled = true;
+        endButton.disabled = false;
+        showToast("Start Trip");
+        console.log('Started tracking. Initial Fuel:', initialFuel);
+    });
+}
+
+if (endButton) {
+    endButton.addEventListener("click", () => {
+        trackingActive = false;
+        endTime = new Date();
+        showToast("End Trip");
+        endButton.disabled = true;
+        reportButton.disabled = false;
+        console.log('Stopped tracking. Fuel Used:', fuelUsed);
+
+        // Mark end point
+        if (!endMarker) {
+            endMarker = L.marker(path[path.length - 1], { icon: endIcon }).addTo(map);
+        }
+    });
+}
 function loadSensorData(deviceId) {
     const sensorRef = firebase.database().ref(deviceId);
     sensorRef.on("value", (snapshot) => {
@@ -216,7 +294,7 @@ function loadSensorData(deviceId) {
             localStorage.setItem("battery_level", battery_level);
             console.log(localStorage);
 
-            setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 5000);
+            setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 10);
             setTimeout(() => updateBattery(battery_level), 500);
             
 
@@ -236,42 +314,7 @@ function logout() {
         console.error("Logout error:", error);
     });
 }
-// 🔹 Function to Sign in with Google
-function signInWithGoogle() {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
-        .then((result) => {
-            const user = result.user;
 
-            // Check if user already exists in Firestore
-            return db.collection('users').doc(user.uid).get()
-                .then((doc) => {
-                    if (!doc.exists) {
-                        // If user does not exist, collect additional details
-                        const username = prompt("Enter a username:");
-                        const deviceId = prompt("Enter your device ID:");
-                        const vehicleType = prompt("Enter your vehicle type (motorcycle, van, car, lorry):");
-                        const mileage = prompt("Enter your vehicle mileage:");
-
-                        return db.collection('users').doc(user.uid).set({
-                            username,
-                            email: user.email,
-                            deviceId,
-                            vehicleType,
-                            mileage,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
-                });
-        })
-        .then(() => {
-            alert("Google Sign-In successful! Redirecting...");
-            window.location.href = "dashboard/dashboard.html";
-        })
-        .catch((error) => {
-            alert("Google Sign-In failed: " + error.message);
-        });
-}
 
 // Google Sign-In function
 function googleSignIn() {
@@ -301,12 +344,12 @@ function googleSignIn() {
             });
         })
         .then(() => {
-            alert("Login successful! Redirecting...");
+            showToast("Login successful! Redirecting...");
             window.location.href = "dashboard/dashboard.html";
         })
         .catch((error) => {
             console.error("Google Sign-In failed:", error.message);
-            alert("Google Sign-In failed: " + error.message);
+            showToast("Google Sign-In failed: " + error.message);
         });
 }
 
@@ -339,7 +382,7 @@ function googleLogin() {
         })
         .catch((error) => {
             console.error("Google Login Error:", error.message);
-            alert("Google Login Failed: " + error.message);
+            showToast("Google Login Failed: " + error.message);
         });
 }
 function completeGoogleRegistration(event) {
@@ -347,7 +390,7 @@ function completeGoogleRegistration(event) {
 
     const user = firebase.auth().currentUser;
     if (!user) {
-        alert("User not logged in!");
+        showToast("User not logged in!");
         return;
     }
 
@@ -357,7 +400,7 @@ function completeGoogleRegistration(event) {
     const mileage = document.getElementById('mileage').value.trim();
 
     if (!username || !deviceId) {
-        alert("Please fill in all required fields.");
+        showToast("Please fill in all required fields.");
         return;
     }
 
@@ -374,12 +417,12 @@ function completeGoogleRegistration(event) {
     db.collection("users").doc(user.uid).set(userData)
         .then(() => {
             console.log("User data saved to Firestore.");
-            alert("Registration completed! Redirecting to dashboard...");
+            showToast("Registration completed! Redirecting to dashboard...");
             window.location.href = "dashboard/dashboard.html";
         })
         .catch((error) => {
             console.error("Error saving user data:", error);
-            alert("Error: " + error.message);
+            showToast("Error: " + error.message);
         });
 }
 document.addEventListener("DOMContentLoaded", function () {
@@ -417,7 +460,7 @@ function googlein() {
         })
         .catch((error) => {
             console.error("Google Login Error:", error.message);
-            alert("Google Login Failed: " + error.message);
+            showToast("Google Login Failed: " + error.message);
         });
 }
 
