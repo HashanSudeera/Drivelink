@@ -148,7 +148,7 @@
             <h1>Drive<span class="highlight">Link</span></h1>
             <p>Fuel Status</p>
         </div>
-        <div class="main-container">
+        <div class="fuel-main-container">
             <div class="box">
                 <div class="container1">
                     <h2>Fuel Gauge</h2><br>
@@ -167,75 +167,157 @@
                 <div class="fuel-details">
                     <h2>Fuel Details</h2>
                     <div class="sub-cal">
-                        <p>Fuel Level : </p>
-                        <p>Fuel Consumption Rate : </p>
+                        <p>Fuel Level :<span id="tank-cap">--</span> L</p>
+                        <p>Fuel Consumption Rate :<span id="avgfuel_con">--</span> L/100 km</p>
                         <p>Fuel Efficiency (km/L) : </p>
-                        <p>Fuel Cost Estimation : </p>
-                        <p><span id="text1">0</span></p>
+                        <!-- <p><span id="text1">0</span></p> -->
                     </div>
                 </div>
             </div>
+
         </div>
-        <script type="module">
+        <div class="cal-Container">
+            <h2>Fuel Cost Calculator</h2><br>
+            <div class="box">
+                <label for="fuelPrice">Fuel Price (per liter):</label>
+                <input type="number" id="fuelPrice" placeholder="Enter fuel price" oninput="calculateFuelCost()"><br>
 
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-            import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-            let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
-
-            console.log(deviceId);
-            let min_value = parseFloat(localStorage.getItem("min_value"));
-            let max_value = parseFloat(localStorage.getItem("max_value"));
+                <p>Fuel Cost: Rs. <span id="fuelCost">0</span></p>
 
 
-            const app = initializeApp(firebaseConfig);
-            const firestore = getFirestore(app);
-            const db = getDatabase(app);
-            const userId = deviceId;
+            </div>
+            <script type="module">
 
-            const userRef = ref(db, `${userId}/fuel_sensor`);
-            onValue(userRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    let current_level = data.value;
-
-                    console.log(current_level);
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+                import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+                import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 
-                    // ✅ Only update UI if elements exist
-                    if (document.getElementById("text1")) document.getElementById("text1").innerText = data.value;
-
-                    setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 500);
+                let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
 
 
-                }
-                function updateFuelLevel(min_level, max_level, current_level) {
-                    // Prevent division by zero
+                console.log(deviceId);
+                let min_value = parseFloat(localStorage.getItem("min_value"));
+                let max_value = parseFloat(localStorage.getItem("max_value"));
+                let tank_value = parseFloat(localStorage.getItem("tank_value"));
+
+
+
+
+                const app = initializeApp(firebaseConfig);
+                const firestore = getFirestore(app);
+                const db = getDatabase(app);
+                const userId = deviceId;
+
+
+                console.log(tank_value);
+
+                const userRef = ref(db, `${deviceId}/fuel_sensor`);
+                onValue(userRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        let current_level = data.value;
+                        console.log("Current Fuel Level:", current_level);
+
+                        if (document.getElementById("text1")) {
+                            document.getElementById("text1").innerText = current_level;
+                        }
+
+                        setTimeout(() => updateFuelLevel(min_value, max_value, current_level, tank_value), 500);
+                    } else {
+                        console.warn("No fuel sensor data found.");
+                    }
+                });
+
+                function updateFuelLevel(min_level, max_level, current_level, tank_value) {
                     if (max_level === min_level) {
                         console.error("Max level and min level are the same. Cannot calculate fuel level.");
                         return;
                     }
 
-                    // Calculate fuel level percentage
                     let fuel_level = ((current_level - min_level) / (max_level - min_level)) * 100;
-
-                    // Ensure the fuel level stays between 0% and 100%
                     fuel_level = Math.max(0, Math.min(100, fuel_level));
 
-                    // Update UI elements
+                    let tank_liter = ((current_level - min_level) / (max_level - min_level)) * tank_value;
+
+                    sessionStorage.setItem('tank_liter', tank_liter);
+                    sessionStorage.setItem('tank_value', tank_value);
+
                     const water = document.getElementById("waterLevel");
                     const text = document.getElementById("fuelText");
+                    const liter = document.getElementById("tank-cap");
+
+                    console.log(tank_liter);
+                    localStorage.setItem("tank_cap", tank_liter.toFixed(2))
+
+
 
                     if (water && text) {
                         water.style.height = fuel_level + "%";
-                        text.innerText = fuel_level.toFixed(1) + "%"; // Show 1 decimal place
+                        text.innerText = fuel_level.toFixed(1) + "%";
+                        liter.innerText = tank_liter.toFixed(1);
+
                     } else {
                         console.error("UI elements not found: waterLevel or fuelText");
                     }
                 }
-            });
-        </script>
+
+                async function fetchFuelConsumption(userId) {
+                    try {
+
+                        const fuelRef = doc(firestore, "averageFuelConsumption", userId);
+                        const fuelSnap = await getDoc(fuelRef);
+
+                        if (fuelSnap.exists()) {
+                            const fuelData = fuelSnap.data();
+                            let avgFuelConsumption = fuelData.averageConsumption;
+                            console.log("Average Fuel Consumption:", avgFuelConsumption);
+
+                            localStorage.setItem("avgConsumption", avgFuelConsumption);
+
+                            const tankCapacityElem = document.getElementById("avgfuel_con");
+                            if (tankCapacityElem) {
+                                tankCapacityElem.innerText = avgFuelConsumption.toFixed(2);
+                            } else {
+                                console.warn("Element with ID 'tank_capasity' not found.");
+                            }
+                        } else {
+                            console.warn("No vehicle data found in Firestore.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching Firestore data:", error);
+                    }
+                }
+
+                // ✅ Fetch Firestore fuel data
+                if (userId) {
+                    fetchFuelConsumption(userId);
+                } else {
+                    console.error("No device ID found in localStorage.");
+                }
+
+
+
+            </script>
+            <script>
+                function calculateFuelCost() {
+                    const fuelPrice = parseFloat(document.getElementById("fuelPrice").value);
+
+                    let tank_value = sessionStorage.getItem("tank_value");
+                    let tank_liter = sessionStorage.getItem("tank_liter");
+
+                    console.log("session", tank_value);
+                    console.log("session", tank_liter);
+
+                    let restOFtank = tank_value - tank_liter;
+
+
+                    let fuelcost = restOFtank * fuelPrice;
+
+                    document.getElementById("fuelCost").innerText = fuelcost.toFixed(2);
+                }
+            </script>
     </main>
 </body>
+
 </html>

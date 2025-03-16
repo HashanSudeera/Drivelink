@@ -150,7 +150,7 @@
         <div class="main-container">
             <div class="box">
                 <div class="container1">
-                    <h2>Fuel Monitor</h2><br>
+                    <h2>Fuel Gauge</h2><br>
 
                     <div class="fuel-container">
                         <div class="water" id="waterLevel">
@@ -161,7 +161,7 @@
                     </div>
 
 
-                    <p>Fule Level (L) &nbsp;&nbsp;: </p>
+                    <p>Fule Capacity <span id="tank_liter">--</span> L</p>
 
 
                 </div>
@@ -176,7 +176,7 @@
                         <div class="charge"></div>
                     </div>
                     <p id="battery-percentage">Battery: 0%</p>
-                   
+
                 </div>
             </div>
         </div>
@@ -187,6 +187,7 @@
                 <h2>Your Device ID: <span id="device-id"></span></h2>
                 <h2>min level: <span id="min-id"></span></h2>
                 <h2>max level: <span id="max-id"></span></h2>
+                <h2>tank level: <span id="tank_capasity"></span></h2>
                 <p id="ultrasonic-value">Distance: -- cm</p>
                 <p id="led-status">LED Status: --</p>
                 <button type="button" id="logout-button" class="logout_but">Logout</button>
@@ -200,6 +201,126 @@
                 </script>
             </div>
         </div>
+        <script type="module">
+
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+            import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+            let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
+
+            console.log(deviceId);
+            let min_value = parseFloat(localStorage.getItem("min_value"));
+            let max_value = parseFloat(localStorage.getItem("max_value"));
+            let tank_value = parseFloat(localStorage.getItem("tank_value"));
+
+            console.log("tank_value")
+
+
+            const app = initializeApp(firebaseConfig);
+            const firestore = getFirestore(app);
+            const db = getDatabase(app);
+            const userId = deviceId;
+
+            const userRef = ref(db, `${userId}`);
+            onValue(userRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    console.log("Firebase Data:", data);
+
+                    // Ensure fuel_sensor and battery exist before accessing them
+                    let current_level = data.fuel_sensor?.value ?? null;
+                    let battery_level = data.battery?.value ?? null;
+
+                    console.log("Current Fuel Level:", current_level);
+                    console.log("Battery Level:", battery_level);
+
+                    if (current_level !== null) {
+                        setTimeout(() => updateFuelLevel(min_value, max_value, current_level, tank_value), 500);
+                    } else {
+                        console.warn("Fuel sensor data is missing.");
+                    }
+
+                    if (battery_level !== null) {
+                        setTimeout(() => updateBattery(battery_level), 500);
+                    } else {
+                        console.warn("Battery data is missing.");
+                    }
+
+                    if (document.getElementById("text1")) {
+                        document.getElementById("text1").innerText = data.value;
+                    }
+
+                } else {
+                    console.warn("No data available in Firebase.");
+                }
+            });
+
+            function updateFuelLevel(min_level, max_level, current_level, tank_value) {
+                if (max_level === min_level) {
+                    console.error("Max level and min level are the same. Cannot calculate fuel level.");
+                    return;
+                }
+
+                let fuel_level = ((current_level - min_level) / (max_level - min_level)) * 100;
+                fuel_level = Math.max(0, Math.min(100, fuel_level));
+
+                let tank_liter = ((current_level - min_level) / (max_level - min_level)) * tank_value;
+
+                const water = document.getElementById("waterLevel");
+                const text = document.getElementById("fuelText");
+                const liter = document.getElementById("tank_liter");
+
+                console.log(tank_liter);
+                localStorage.setItem("tank_cap", tank_liter.toFixed(2))
+
+
+
+                if (water && text) {
+                    water.style.height = fuel_level + "%";
+                    text.innerText = fuel_level.toFixed(1) + "%";
+                    liter.innerText = tank_liter.toFixed(1);
+
+                } else {
+                    console.error("UI elements not found: waterLevel or fuelText");
+                }
+            }
+
+            function updateBattery(level) {
+                const charge = document.querySelector(".charge");
+                const batteryPercentage = document.getElementById("battery-percentage");
+                console.log("Updating battery level...");
+
+                if (!charge || !batteryPercentage) {
+                    console.error("Error: Battery elements not found in the DOM!");
+                    return;
+                }
+
+                if (level === undefined || level === null) {
+                    console.error("Error: Battery level is undefined or null.");
+                    return;
+                }
+
+                let cal_level = (level / 12) * 100;
+                cal_level = Math.max(0, Math.min(cal_level, 100));
+
+                console.log("Calculated Battery Level:", cal_level);
+
+                charge.style.height = cal_level + "%";
+
+                if (cal_level <= 25) {
+                    charge.style.background = "var(--red)";
+                } else if (cal_level <= 50) {
+                    charge.style.background = "var(--orange)";
+                } else if (cal_level <= 75) {
+                    charge.style.background = "var(--yellow)";
+                } else {
+                    charge.style.background = "var(--green)";
+                }
+
+                batteryPercentage.innerText = `Battery: ${Math.round(cal_level)}%`;
+            }
+        </script>
     </main>
 
 

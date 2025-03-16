@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (loginButton) {
         loginButton.addEventListener('click', loginUser);
-    } 
+    }
     if (googleLoginButton) {
         googleLoginButton.addEventListener('click', googleLogin);
     }
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (logoutbutton) {
         logoutbutton.addEventListener('click', logout);
     }
-    
+
 
 });
 
@@ -158,10 +158,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const deviceId = userData.deviceId;
                     const username = userData.username;
                     const vehicleType = userData.vehicleType; // Get vehicleType
-                    
-                    localStorage.setItem("deviceId",deviceId);
+
+                    localStorage.setItem("deviceId", deviceId);
                     localStorage.setItem("username", username);
-                   
+
                     // Update UI
                     document.getElementById("device-id").innerText = deviceId;
                     document.getElementById("usernametag").innerText = `Hi, ${username} !`;
@@ -174,12 +174,16 @@ document.addEventListener("DOMContentLoaded", async function () {
                         const vehicleData = vehicleSnap.data();
                         min_value = vehicleData.minLevel;
                         max_value = vehicleData.maxLevel;
+                        tank_liter = vehicleData.tankvolum;
+
                         localStorage.setItem("min_value", min_value);
                         localStorage.setItem("max_value", max_value);
-                      
+                        localStorage.setItem("tank_value", tank_liter);
+
 
                         document.getElementById("min-id").innerText = min_value;
                         document.getElementById("max-id").innerText = max_value;
+                        document.getElementById("tank_capasity").innerText = tank_liter;
                     } else {
                         console.log("No vehicle data found.");
                     }
@@ -202,27 +206,32 @@ function loadSensorData(deviceId) {
     sensorRef.on("value", (snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-            document.getElementById("ultrasonic-value").innerText = `Distance: ${data.ultrasonic.value} cm`;
-            document.getElementById("led-status").innerText = `LED Status: ${data.led_status.value}`;
+            if (data) {
+                document.getElementById("ultrasonic-value").innerText = `Distance: ${data.ultrasonic.value} cm`;
+                document.getElementById("led-status").innerText = `LED Status: ${data.led_status.value}`;
 
-            // Declare current_level correctly
-            let current_level = data.fuel_sensor.value;
-            let lati = data.tracking.longitude;
-            localStorage.setItem("latitude",lati) ;
+                // Declare current_level correctly
+                let current_level = data.fuel_sensor.value;
+                let lati = data.tracking.longitude;
+                localStorage.setItem("latitude", lati);
 
-            let battery_level = data.battery.value;
+                let battery_level = data.battery.value;
 
-            localStorage.setItem("fuel_level", current_level);
-            localStorage.setItem("battery_level", battery_level);
-            console.log(localStorage);
+                localStorage.setItem("fuel_level", current_level);
+                localStorage.setItem("battery_level", battery_level);
+                console.log(localStorage);
 
-            setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 5000);
-            setTimeout(() => updateBattery(battery_level), 500);
-            
+                //setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 5000);
+                //setTimeout(() => updateBattery(battery_level), 500);
 
-        } else {
-            document.getElementById("ultrasonic-value").innerText = "No data available";
-            document.getElementById("led-status").innerText = "LED Status: --";
+
+            } else {
+                document.getElementById("ultrasonic-value").innerText = "No data available";
+                document.getElementById("led-status").innerText = "LED Status: --";
+            }
+        }
+        else {
+            console.log("Nothing data")
         }
     });
 }
@@ -428,7 +437,7 @@ function googlein() {
 
 // fuel moniter sections
 
-function updateFuelLevel(min_level, max_level, current_level) {
+/* function updateFuelLevel(min_level, max_level, current_level) {
     // Prevent division by zero
     if (max_level === min_level) {
         console.error("Max level and min level are the same. Cannot calculate fuel level.");
@@ -451,9 +460,9 @@ function updateFuelLevel(min_level, max_level, current_level) {
     } else {
         console.error("UI elements not found: waterLevel or fuelText");
     }
-}
+} */
 
-function updateBattery(level) {
+/* function updateBattery(level) {
     const charge = document.querySelector(".charge");
     const batteryPercentage = document.getElementById("battery-percentage");
     console.log("Updating battery level...");
@@ -490,7 +499,7 @@ function updateBattery(level) {
     }
 
     batteryPercentage.innerText = `Battery: ${Math.round(cal_level)}%`;
-}
+} */
 
 
 

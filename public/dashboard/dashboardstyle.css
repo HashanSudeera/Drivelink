@@ -7,6 +7,11 @@
     --text-clr: #EEEEEE;
     --accent-clr: #C4FB6D;
     --secondary-text-clr: #b0b3c1;
+
+
+
+
+    --fuel-accent: #e02b2b;
 }
 
 * {
@@ -149,6 +154,7 @@ body {
 #toggle-btn:hover {
     background-color: var(--hover-clr);
 }
+
 #toggleSubMenu {
     background-color: var(--hover-clr);
 }
@@ -444,7 +450,7 @@ p {
     bottom: -00%;
     width: 100%;
     height: var(--fuel-level, 100%);
-    background: #C4FB6D;
+    background: var(--fuel-accent);
     animation: wave-animation 2s infinite ease-in-out;
 }
 
@@ -537,7 +543,7 @@ p {
 }
 
 body {
-    
+
     text-align: center;
     margin: 0;
     padding: 0;
@@ -549,9 +555,11 @@ h1 {
 
 /* Full page map view */
 #map {
-    height: 50vh;  /* Full screen height */
-    width: 100%;    /* Full screen width */
-    
+    height: 50vh;
+    /* Full screen height */
+    width: 100%;
+    /* Full screen width */
+
 }
 
 /* Center button styling */
@@ -563,15 +571,19 @@ h1 {
     cursor: pointer;
     border-radius: 8px;
     font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);  /* Nice shadows */
-    transition: all 0.3s ease-in-out;  /* Smooth transition for hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Nice shadows */
+    transition: all 0.3s ease-in-out;
+    /* Smooth transition for hover */
     font-size: 14px;
     margin: 10px;
 }
 
 .recenter-btn:hover {
-    background: linear-gradient(145deg, #388E3C, #4CAF50); /* Invert the gradient on hover */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);  /* Increase shadow on hover */
+    background: linear-gradient(145deg, #388E3C, #4CAF50);
+    /* Invert the gradient on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Increase shadow on hover */
 }
 
 .recenter-btn:active {
@@ -614,7 +626,7 @@ button:hover {
 }
 
 button:nth-child(1) {
-    background-color:var(--base-clr);
+    background-color: var(--base-clr);
     color: white;
 }
 
@@ -634,12 +646,12 @@ h1 {
     background: var(--base-clr);
     width: 50%;
     margin-left: 100px;
-    
+
     margin: 20px auto;
     padding: 50px;
     border-radius: 100px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-   
+
 }
 
 /* Trip Data */
@@ -659,8 +671,8 @@ p {
 /* Trip List */
 .trip-report {
     background: var(--base-clr);
-    color : var(--text-clr);
-    
+    color: var(--text-clr);
+
     padding: px;
     margin: 10px 0;
     border-radius: 50px;
@@ -765,4 +777,52 @@ p {
     height: 40px;
     position: absolute;
     right: 20px;
+}
+
+.cal-Container {
+    border: 1px solid var(--line-clr);
+    border-radius: 1em;
+    margin-bottom: 20px;
+    padding: min(3em, 15%);
+
+    h2 {
+        color: var(--fuel-accent);
+    }
+
+    p {
+        margin-top: 1em
+    }
+
+    input {
+        width: 25%;
+        height: 25px;
+        font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #272728;
+        color: var(--text-clr);
+        border: 1px solid var(--line-clr);
+        border-radius: 5px;
+        padding: 2px;
+    }
+
+}
+
+.fuel-main-container {
+    border: 1px solid var(--line-clr);
+    border-radius: 1em;
+    margin-bottom: 20px;
+    padding: min(3em, 15%);
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+
+
+    h2 {
+        color: var(--fuel-accent);
+    }
+
+    p {
+        margin-top: 1em
+    }
+
 }
