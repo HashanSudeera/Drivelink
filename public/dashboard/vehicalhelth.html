@@ -3,15 +3,128 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboardstyle.css">
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="../app.js"></script>
-    <script src="dashboard.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="stylesheet" href="dashboardstyle.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/regression"></script>
+<script src="../app.js"></script>
+<script src="dashboard.js" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/regression"></script>
+
+
+    <style>
+        /* General container for charts */
+        .helthcontainer {
+            background-color: #0a0a0a;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(34, 34, 34, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Chart container styles */
+        .chart-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            position: relative;
+            overflow-x: auto; /* Enable horizontal scrolling */
+        }
+
+        /* Ensure canvas elements are responsive */
+        .chart-container canvas {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 300px; /* Adjust as needed */
+        }
+
+        /* Chart title styles */
+        .chart-container h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        /* Prediction Styles */
+        #prediction {
+            background-color: #202020;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #prediction h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+
+        #prediction p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* Average Fuel Consumption Styles */
+        #averageFuelConsumption {
+            background-color: #202020;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #averageFuelConsumption h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+
+        #averageFuelConsumption p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* Adjustments for mobile devices */
+        @media (max-width: 768px) {
+            .chart-container {
+                max-width: 100%; /* Full width on smaller screens */
+            }
+
+            .chart-container h1 {
+                font-size: 1.2rem; /* Smaller heading size for mobile */
+            }
+
+            #prediction h2,
+            #averageFuelConsumption h2 {
+                font-size: 1.2rem;
+            }
+
+            #prediction p,
+            #averageFuelConsumption p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Optional: Add padding for better spacing on smaller screens */
+        @media (max-width: 480px) {
+            .helthcontainer {
+                padding: 10px;
+            }
+
+            .chart-container {
+                padding: 0 10px; /* Add some padding on very small screens */
+            }
+        }
+    </style>
 </head>
 
 <body id="dashboardPage">
@@ -147,18 +260,232 @@
         <span id="toastMessage">DriveLink</span>
     </div>
 
-    <!-- ======================================================================================================================-->
     <main>
         <div class="title-container">
             <h1><span class="highlight">Drive</span>Link</h1>
-            <p>Vehical Helth</p>
+            <p>Vehicle Health</p>
         </div>
         <div class="container">
-            <h1>Vehical helth</h1>
+            <h1>Vehicle Health</h1>
+        </div>
+        <div class="helthcontainer">
+            <div class="chart-container">
+                <h1>Fuel Consumption Over Time</h1>
+                <canvas id="fuelChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h1>Distance Traveled Per Trip</h1>
+                <canvas id="distanceChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h1>Fuel Cost Over Time</h1>
+                <canvas id="fuelCostChart"></canvas>
+            </div>
+            <div id="prediction"></div>
+            <div id="averageFuelConsumption">
+                <h2>Average Fuel Consumption</h2>
+                <p><span id="averageConsumptionValue">Loading...</span> L/100 km</p>
+            </div>
         </div>
     </main>
 
+    <script type="module">
+        // Import Firebase v9 modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    
+        // Function to update average fuel consumption
+async function updateAverageFuelConsumption(userId, newConsumptionRate) {
+    try {
+        // Reference to the average consumption document
+        const avgConsumptionRef = doc(firestore, `averageFuelConsumption/${userId}`);
 
+        // Fetch the current average consumption data
+        const avgConsumptionDoc = await getDoc(avgConsumptionRef);
+
+        let currentAverage = 0;
+        let totalTrips = 0;
+
+        // If the document exists, get the current average and total trips
+        if (avgConsumptionDoc.exists()) {
+            const data = avgConsumptionDoc.data();
+            currentAverage = data.averageConsumption;
+            totalTrips = data.totalTrips;
+        }
+
+        // Calculate the new average
+        const newAverage = ((currentAverage * totalTrips) + parseFloat(newConsumptionRate)) / (totalTrips + 1);
+
+        // Update Firestore with the new average and total trips
+        await setDoc(avgConsumptionRef, {
+            averageConsumption: newAverage,
+            totalTrips: totalTrips + 1
+        });
+
+        console.log("Average fuel consumption updated successfully!");
+    } catch (error) {
+        console.error("Error updating average fuel consumption:", error);
+    }
+}
+
+// Example usage
+const userId = "User10"; // Replace with the actual user ID
+const newConsumptionRate = "28.38"; // Replace with the new trip's consumption rate
+
+updateAverageFuelConsumption(userId, newConsumptionRate);
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const firestore = getFirestore(app);
+    
+        // Function to predict future fuel consumption
+        function predictFuelConsumption(tripData) {
+            // Prepare data for regression
+            const data = tripData.map((trip, index) => [index, trip.fuelUsed]);
+    
+            // Perform linear regression
+            const result = regression.linear(data);
+    
+            // Predict future fuel consumption
+            const slope = result.equation[0];
+            const intercept = result.equation[1];
+            const lastIndex = tripData.length - 1;
+            const predictedValue = slope * (lastIndex + 1) + intercept;
+    
+            // Calculate days until renewal (example: when fuel consumption reaches 50L)
+            const renewalThreshold = 50; // Set your threshold here
+            const daysToRenewal = Math.ceil((renewalThreshold - intercept) / slope) - lastIndex;
+    
+            return {
+                predictedValue,
+                daysToRenewal
+            };
+        }
+    
+        // Function to fetch and analyze trip data
+        async function fetchAndAnalyzeTripData(userId) {
+            const tripsRef = collection(firestore, `tripReports/${userId}/trips`);
+            const snapshot = await getDocs(tripsRef);
+            const tripData = [];
+    
+            snapshot.forEach((doc, index) => {
+                const data = doc.data();
+                tripData.push({
+                    day: `Day ${index + 1}`, // Use "Day 1", "Day 2", etc.
+                    fuelUsed: parseFloat(data.fuelUsed),
+                    distance: parseFloat(data.distance),
+                    fuelCost: parseFloat(data.fuelCost)
+                });
+            });
+    
+            // Sort trip data by day (if needed)
+            tripData.sort((a, b) => a.day.localeCompare(b.day));
+    
+            // Analyze and display fuel consumption
+            analyzeFuelConsumption(tripData);
+    
+            // Analyze and display distance traveled
+            analyzeDistanceTraveled(tripData);
+    
+            // Analyze and display fuel cost
+            analyzeFuelCost(tripData);
+        }
+    
+        // Function to create a bar chart
+        function createBarChart(ctx, labels, data, label) {
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: label
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                callback: function (value, index) {
+                                    return labels[index]; // Show "Day 1", "Day 2", etc.
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Hide legend
+                        }
+                    }
+                }
+            });
+        }
+    
+        // Function to initialize charts
+        function initializeCharts(tripData) {
+            const labels = tripData.map(trip => trip.day); // Use "Day 1", "Day 2", etc.
+            const fuelUsed = tripData.map(trip => trip.fuelUsed);
+            const distances = tripData.map(trip => trip.distance);
+            const fuelCosts = tripData.map(trip => trip.fuelCost);
+    
+            // Create fuel consumption chart
+            const fuelChartCtx = document.getElementById('fuelChart').getContext('2d');
+            createBarChart(fuelChartCtx, labels, fuelUsed, 'Fuel Used (L)');
+    
+            // Create distance traveled chart
+            const distanceChartCtx = document.getElementById('distanceChart').getContext('2d');
+            createBarChart(distanceChartCtx, labels, distances, 'Distance Traveled (km)');
+    
+            // Create fuel cost chart
+            const fuelCostChartCtx = document.getElementById('fuelCostChart').getContext('2d');
+            createBarChart(fuelCostChartCtx, labels, fuelCosts, 'Fuel Cost (Rs)');
+        }
+    
+        // Function to analyze fuel consumption and display chart
+        function analyzeFuelConsumption(tripData) {
+            initializeCharts(tripData);
+    
+            // Add prediction
+            const prediction = predictFuelConsumption(tripData);
+            document.getElementById('prediction').innerHTML = `
+                <h2>Prediction</h2>
+                <p>Based on historical data, the fuel consumption is predicted to reach ${prediction.predictedValue.toFixed(2)} L in the next ${prediction.daysToRenewal} days.</p>
+            `;
+        }
+    
+        // Function to analyze distance traveled and display chart
+        function analyzeDistanceTraveled(tripData) {
+            // This function can be used for additional analysis if needed
+            console.log("Distance Traveled Analysis:", tripData);
+        }
+    
+        // Function to analyze fuel cost and display chart
+        function analyzeFuelCost(tripData) {
+            // This function can be used for additional analysis if needed
+            console.log("Fuel Cost Analysis:", tripData);
+        }
+    
+        // Fetch and analyze trip data on page load
+        async function initializePage() {
+            const userId = "User10"; // Replace with dynamic user ID if needed
+            await fetchAndAnalyzeTripData(userId);
+            await fetchAndDisplayAverageFuelConsumption(userId);
+        }
+    
+        initializePage();
+    </script>
 </body>
 
 </html>

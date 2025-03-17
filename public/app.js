@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     // Get buttons after page loads
     const registerButton = document.getElementById('register-button');

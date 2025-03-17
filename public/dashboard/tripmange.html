@@ -257,10 +257,11 @@
                 // Import necessary Firebase modules
                 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
                 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-                import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+                
                 import { get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
                 import { set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-                import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+       
+                import { getFirestore, collection, addDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
                 document.addEventListener("DOMContentLoaded", () => {
                 // Initialize Firebase
@@ -372,48 +373,66 @@
                 }
 
                 if (reportButton) {
-                reportButton.addEventListener("click", async () => {
-                    try {
-                        if (!startTime || !endTime) return alert("Start or end time missing.");
+                    reportButton.addEventListener("click", async () => {
+                        try {
+                            if (!startTime || !endTime) return alert("Start or end time missing.");
 
-                        // Get trip name from input field
-                        const tripName = document.getElementById("tripName").value.trim();
-                        console.log("Trip Name:", tripName); // Debugging: Log the trip name
+                            // Get trip name from input field
+                            const tripName = document.getElementById("tripName").value.trim();
+                            console.log("Trip Name:", tripName); // Debugging: Log the trip name
 
-                        const tripData = {
-                            timestamp:timestamp,
-                            tripName: tripName || "", // Use "Unnamed Trip" if no name is provided
-                            distance: totalDistance.toFixed(2),
-                            duration: ((endTime - startTime) / 1000 / 60).toFixed(2),
-                            movingTime: movingDuration.toFixed(2),
-                            topSpeed: topSpeed.toFixed(2),
-                            startTime: startTime.toLocaleTimeString(),
-                            endTime: endTime.toLocaleTimeString(),
-                            tripDate: startTime.toISOString().split("T")[0],
-                            route: path.map(coords => ({ lat: coords[0], lon: coords[1] })),
-                            stopPoints: stopPoints,
-                            startPoint: path[0],
-                            endPoint: path[path.length - 1],
-                            fuelUsed: fuelUsed.toFixed(2),
-                            fuelCost: (fuelUsed * fuelCostPerLitre).toFixed(2),
-                            consumptionRate: ((fuelUsed / totalDistance) * 100).toFixed(2)
-                        };
+                            // Create a Date object for the desired date and time
+                            const date = new Date(2023, 9, 1, 12, 0, 0); // Note: Months are 0-indexed (9 = October)
 
-                        console.log("Trip Data:", tripData); // Debugging: Log the trip data
+                            // Convert the Date object to an ISO string
+                            const timestamp = date.toISOString();
 
-                        await addDoc(collection(firestore, `tripReports/${userId}/trips`), tripData);
-                        
-                        showToast("Trip saved to FirestoreFDS!");
-                        
-        
-                        location.reload();
-                    } catch (error) {
-                        showToast("Error saving trip: ", error);
-                        console.error("Error saving trip: ", error);
-                    }
-                });
-            }
-            
+                            console.log(timestamp); // Output: "2023-10-01T12:00:00.000Z"
+
+                            const consumptionRate = ((fuelUsed / totalDistance) * 100).toFixed(2);
+
+                            const tripData = {
+                                timestamp: new Date().toISOString(), // Current timestamp in ISO format
+                                timestamp: new Date().toISOString(),
+                                tripName: tripName || "", // Use "Unnamed Trip" if no name is provided
+                                distance: totalDistance.toFixed(2),
+                                duration: ((endTime - startTime) / 1000 / 60).toFixed(2),
+                                movingTime: movingDuration.toFixed(2),
+                                topSpeed: topSpeed.toFixed(2),
+                                startTime: startTime.toLocaleTimeString(),
+                                endTime: endTime.toLocaleTimeString(),
+                                tripDate: startTime.toISOString().split("T")[0],
+                                route: path.map(coords => ({ lat: coords[0], lon: coords[1] })),
+                                stopPoints: stopPoints,
+                                startPoint: path[0],
+                                endPoint: path[path.length - 1],
+                                fuelUsed: fuelUsed.toFixed(2),
+                                fuelCost: (fuelUsed * fuelCostPerLitre).toFixed(2),
+                                consumptionRate: consumptionRate
+                            };
+
+                            console.log("Trip Data:", tripData); // Debugging: Log the trip data
+
+                            // Add trip data to Firestore
+                            await addDoc(collection(firestore, `tripReports/${userId}/trips`), tripData);
+
+                            // Update average fuel consumption
+                            await updateAverageFuelConsumption(userId, parseFloat(consumptionRate));
+
+                            showToast("Trip saved and average fuel consumption updated!");
+                            location.reload();
+                        } catch (error) {
+                            showToast("Error saving trip: ", error);
+                            console.error("Error saving trip: ", error);
+                        }
+                    });
+                }
+
+                
+
+       
+    
+                            
                 // Listen to GPS data from Firebase
                 const userRef = ref(db, `${userId}/tracking`);
                 onValue(userRef, (snapshot) => {
@@ -495,6 +514,26 @@
                         }
                     }
                 });
+                async function updateAverageFuelConsumption(userId, newConsumptionRate) {
+                    const avgConsumptionRef = doc(firestore, `averageFuelConsumption/${userId}`);
+                    const avgConsumptionDoc = await getDoc(avgConsumptionRef);
+
+                    if (avgConsumptionDoc.exists()) {
+                        const existingData = avgConsumptionDoc.data();
+                        const totalTrips = existingData.totalTrips + 1;
+                        const newAverage = ((existingData.averageConsumption * existingData.totalTrips) + newConsumptionRate) / totalTrips;
+
+                        await setDoc(avgConsumptionRef, {
+                            averageConsumption: newAverage,
+                            totalTrips: totalTrips
+                        });
+                    } else {
+                        await setDoc(avgConsumptionRef, {
+                            averageConsumption: newConsumptionRate,
+                            totalTrips: 1
+                        });
+                    }
+                }
 
                 // Haversine distance function
                 function calculateDistance(latlng1, latlng2) {
