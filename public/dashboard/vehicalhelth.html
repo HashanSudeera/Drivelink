@@ -99,7 +99,7 @@
                     <span>Trip Manage</span>
                 </a>
             </li>
-           
+
             <li class="active">
                 <a href="vehicalhelth.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
@@ -110,7 +110,7 @@
                     <span>Vehical Helth</span>
                 </a>
             </li>
-            
+
             <li>
                 <button onclick=toggleSubMenu(this) class="dropdown-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
@@ -151,6 +151,87 @@
         <div class="container">
             <h1>Vehical helth</h1>
         </div>
+        <script type="module">
+
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+            import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+            let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
+
+            console.log(deviceId);
+            let min_value = parseFloat(localStorage.getItem("min_value"));
+            let max_value = parseFloat(localStorage.getItem("max_value"));
+            let tank_value = parseFloat(localStorage.getItem("tank_value"));
+
+            console.log("tank_value")
+
+
+            const app = initializeApp(firebaseConfig);
+            const firestore = getFirestore(app);
+            const db = getDatabase(app);
+            const userId = deviceId;
+
+            const userRef = ref(db, `${userId}`);
+            onValue(userRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    console.log("Firebase Data:", data);
+
+                    // Ensure fuel_sensor and battery exist before accessing them
+                    let current_level = data.fuel_sensor?.value ?? null;
+                    let battery_level = data.battery?.value ?? null;
+
+                    console.log("Current Fuel Level:", current_level);
+                    console.log("Battery Level:", battery_level);
+
+                    if (current_level !== null) {
+                        setTimeout(() => updateFuelLevel(min_value, max_value, current_level, tank_value), 500);
+                    } else {
+                        console.warn("Fuel sensor data is missing.");
+                    }
+
+                    if (battery_level !== null) {
+                        setTimeout(() => updateBattery(battery_level), 500);
+                    } else {
+                        console.warn("Battery data is missing.");
+                    }
+
+                    if (document.getElementById("text1")) {
+                        document.getElementById("text1").innerText = data.value;
+                    }
+
+                } else {
+                    console.warn("No data available in Firebase.");
+                }
+            });
+
+            function calculateVehicleHealth(fuelLevel, batteryVoltage, engineTemp) {
+                let healthScore = 0;
+
+                // Fuel level (0 to 100%)
+                healthScore += (fuelLevel / 100) * 0.4;  // 40% weight on fuel level
+
+                // Battery voltage (ideal range: 12V to 14V)
+                if (batteryVoltage >= 12 && batteryVoltage <= 14) {
+                    healthScore += 1 * 0.3;  // 30% weight on battery voltage
+                } else {
+                    // Penalize if voltage is outside the ideal range
+                    healthScore += Math.max(0, (batteryVoltage - 10) / 4) * 0.3;  // Normalize voltage from 10V to 16V
+                }
+
+                // Engine temperature (ideal range: 190°F to 220°F)
+                if (engineTemp >= 190 && engineTemp <= 220) {
+                    healthScore += 1 * 0.3;  // 30% weight on engine temperature
+                } else {
+                    // Penalize if the temperature is outside the ideal range
+                    healthScore += Math.max(0, 1 - Math.abs(engineTemp - 200) / 30) * 0.3;  // Normalize to ideal range of 200°F
+                }
+
+                // Return overall health score as a percentage
+                return healthScore * 100;  // 0 to 100% scale
+            }
+        </script>
     </main>
 
 
