@@ -167,19 +167,17 @@
             <h2>Your Device ID : <span id="device-id"></span></h2>
             <div id="map"></div>
             <script type="module">
-
+                
                 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
                 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
                 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
                 let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
-
+                let usernametag = localStorage.getItem("username"); 
                 const app = initializeApp(firebaseConfig);
                 const firestore = getFirestore(app);
                 const db = getDatabase(app);
                 const userId = deviceId;
-                
-                
-                
+                console.log(usernametag);
                 let map = L.map('map').setView([0, 0], 13);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 

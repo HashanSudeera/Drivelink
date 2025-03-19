@@ -27,8 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (logoutbutton) {
         logoutbutton.addEventListener('click', logout);
     }
-    
-
 });
 
 // Firebase Configuration
@@ -135,8 +133,7 @@ function loginUser(event) {
             showToast("Login failed: " + error.message);
         });
 }
-let min_value = null;
-let max_value = null;
+
 
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -163,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     
                     localStorage.setItem("deviceId",deviceId);
                     localStorage.setItem("username", username);
-                   
+                   console.log(username);
                     // Update UI
                     document.getElementById("device-id").innerText = deviceId;
                     document.getElementById("usernametag").innerText = `Hi, ${username} !`;
@@ -243,39 +240,6 @@ async function getInitialFuel() {
     }
 }
 
-// Start tracking
-const startButton = document.getElementById("startButton");
-const endButton = document.getElementById("endButton");
-const reportButton = document.getElementById("reportButton");
-
-if (startButton) {
-    startButton.addEventListener("click", async () => {
-        await getInitialFuel();
-        trackingActive = true;
-        startTime = new Date();
-        fuelUsed = 0; // Reset fuel used
-        startButton.disabled = true;
-        endButton.disabled = false;
-        showToast("Start Trip");
-        console.log('Started tracking. Initial Fuel:', initialFuel);
-    });
-}
-
-if (endButton) {
-    endButton.addEventListener("click", () => {
-        trackingActive = false;
-        endTime = new Date();
-        showToast("End Trip");
-        endButton.disabled = true;
-        reportButton.disabled = false;
-        console.log('Stopped tracking. Fuel Used:', fuelUsed);
-
-        // Mark end point
-        if (!endMarker) {
-            endMarker = L.marker(path[path.length - 1], { icon: endIcon }).addTo(map);
-        }
-    });
-}
 function loadSensorData(deviceId) {
     const sensorRef = firebase.database().ref(deviceId);
     sensorRef.on("value", (snapshot) => {

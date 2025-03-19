@@ -20,7 +20,7 @@
     <nav id="sidebar">
         <ul>
             <li>
-                <p class="logo" id="usernametag">Hi, -- !</p>
+                <p class="logo">HI <span id="device-id"> --</span></p> 
                 <button onclick=toggleSidebar() id="toggle-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                         fill="#e8eaed">
@@ -152,6 +152,7 @@
         <div class="title-container">
             <h1><span class="highlight">Drive</span>Link</h1>
             <p>Fuel Status</p>
+            <span id="device-id"></span>
         </div>
         <div class="main-container">
             <div class="box">
@@ -192,7 +193,7 @@
             console.log(deviceId);
             let min_value = parseFloat(localStorage.getItem("min_value"));
             let max_value = parseFloat(localStorage.getItem("max_value"));
-
+            let usernametag = localStorage.getItem("username"); 
 
             const app = initializeApp(firebaseConfig);
             const firestore = getFirestore(app);
