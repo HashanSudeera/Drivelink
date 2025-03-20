@@ -669,20 +669,7 @@ p {
     border-radius: 10px;
 }
 
-/* Trip List */
-.trip-report {
-    background: var(--base-clr);
-    color: var(--text-clr);
 
-    padding: px;
-    margin: 10px 0;
-    border-radius: 50px;
-    box-shadow: 0 50px 100px rgba(128, 127, 127, 0.1);
-    cursor: pointer;
-    transition: all 0.5s ease;
-    font-family: 'Poppins', sans-serif;
-    border: 0.5px solid var(--accent-clr);
-}
 
 .trip-report:hover {
 
@@ -898,18 +885,7 @@ p {
     }
     }
     
-    #tripName{
-        width: 60%;
-        padding: 5px;
-        position: static;
     
-        margin-bottom: 5px;
-        background-color: rgb(48, 48, 48);
-        border: 1px solid #242323;
-        color: white;
-        border-radius: 4px;
-        font-size: 14px;
-    }
     /* Ensure the input box stays visible */
 .infodata {
     display: flex;
@@ -917,22 +893,7 @@ p {
     align-items: center;
     padding-bottom: 20px; 
 }
-#tripName {
-    
-    width: 90%;
-    max-width: 400px; /* Limit the width for better readability */
-    padding: 10px;
-    font-size: 16px;
-    margin-top: 10px; /* Add some spacing */
-    margin-bottom: 10px;
-   /*  position: sticky; */
-    bottom: 10px; /* Keep the input box above the keyboard */
-    background-color: rgb(0, 0, 0); /* Ensure it's visible */
-    z-index: 1000; /* Ensure it's above other elements */
-    border: 1px solid #000000;
-    border-radius: 4px;
-    color: white;
-}
+
 
 /* Toast Notification Styles */
 .toast {
@@ -1089,9 +1050,175 @@ body.blurred .blur-overlay {
     }
 }
 
+/* Trip Timings Section */
+.trip-timings {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #222222;
+    border-radius: 12px;
+    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.1);
+}
 
-    
-    
-    
-    
+.timing-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 calc(33.33% - 20px); /* Adjust for 3 items per row */
+    padding: 10px;
+    background-color: #131313;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    min-width: 150px; /* Minimum width for each item */
+}
 
+.timing-icon {
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.timing-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.timing-label {
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.timing-value {
+    font-size: 14px;
+    color: #cfcfcf;
+    font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .timing-item {
+        flex: 1 1 calc(50% - 10px); /* 2 items per row on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .timing-item {
+        flex: 1 1 100%; /* 1 item per row on mobile */
+    }
+}
+    
+    
+/* Map Controls Section */
+.map-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.refresh-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.refresh-button:hover {
+    background-color: #0056b3;
+}
+
+.refresh-button svg {
+    width: 18px;
+    height: 18px;
+}
+/* Custom Leaflet Control (Refresh Button) */
+.leaflet-control-refresh {
+    background-color: #ffffff;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.leaflet-control-refresh:hover {
+    background-color: #f0f0f0;
+}
+
+.leaflet-control-refresh svg {
+    width: 20px;
+    height: 20px;
+    fill: #333;
+}
+
+/* Trip Reports Container */
+.trip-reports-container {
+    padding: 20px;
+}
+
+/* Grid Layout */
+#tripList {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for desktop */
+    gap: 20px;
+}
+
+/* Trip Report Card */
+.trip-report {
+    background-color:#202020;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trip-report:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.trip-report h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color:#a7a7a7;
+}
+
+.trip-report p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #ffffff;
+    margin: 8px 0;
+}
+
+.trip-report p svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--accent-clr);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1500px) {
+    #tripList {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    #tripList {
+        grid-template-columns: 1fr; /* 1 column for mobile */
+    }
+}

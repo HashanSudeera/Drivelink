@@ -16,7 +16,7 @@
     <nav id="sidebar">
         <ul>
             <li>
-                <p class="logo" id="usernametag">Hi, -- !</p>
+                <p >Hi,<span id="username">--</span></p>
                 <button onclick=toggleSidebar() id="toggle-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                         fill="#e8eaed">
@@ -145,7 +145,8 @@
     <main>
         <div class="title-container">
             <h1><span class="highlight">Drive</span>Link</h1>
-            <p>Trip Reports</p>
+            
+            <p><span id="device_Id" > --</span> 's Trip Reports</p>
         </div>
         <div>
             <script type="module">
@@ -155,29 +156,65 @@
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             
-            const deviceId = localStorage.getItem("deviceId");
-            console.log(deviceId);
+            const device_Id = localStorage.getItem("deviceId");
+            console.log(device_Id);
             
+            ;
+          
+
+
+
+
             async function loadTripReports() {
-                const tripRef = collection(db, `tripReports/${deviceId}/trips`);
+                const tripRef = collection(db, `tripReports/${device_Id}/trips`);
                 const tripQuery = query(tripRef, orderBy("tripDate", "desc")); // Sort by tripDate (newest first)
                 const snapshot = await getDocs(tripQuery);
                 const tripContainer = document.getElementById("tripList");
                 tripContainer.innerHTML = ""; // Clear previous entries
                 let tripNumber = 1;
-            
+
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     const tripElement = document.createElement("div");
                     tripElement.classList.add("trip-report");
                     tripElement.innerHTML = `
-                        <h2>Trip ${tripNumber} - ${data.tripName} - ${data.tripDate}</h2>
-                        <p><strong>Distance:</strong> ${data.distance}</p>
-                        <p><strong>Duration:</strong> ${data.duration}</p>
-                        <p><strong>Top Speed:</strong> ${data.topSpeed}</p>
-                        <p><strong>Moving Time:</strong> ${data.movingTime}</p>
-                        <p><strong>Start Time:</strong> ${data.startTime}</p>
-                        <p><strong>End Time:</strong> ${data.endTime}</p>
+                        <h2>Trip ${tripNumber} - ${data.tripName || "Unnamed Trip"}</h2>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                <path d="M200-80q-33 0-56.5-23.5T120-160v-440q0-33 23.5-56.5T200-680h40v-120q0-33 23.5-56.5T320-880h320q33 0 56.5 23.5T720-800v120h40q33 0 56.5 23.5T840-600v440q0 33-23.5 56.5T760-80H200Zm0-80h560v-440H200v440Zm80-520h400v-120H280v120Zm-80 520v-440 440Z"/>
+                            </svg>
+                            <span>Date: ${data.tripDate || "N/A"}</span>
+                        </p>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                <path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-320q17 0 28.5-11.5T520-560v-160q0-17-11.5-28.5T480-760q-17 0-28.5 11.5T440-720v160q0 17 11.5 28.5T480-520Z"/>
+                            </svg>
+                            <span>Start Time: ${data.startTime || "N/A"}</span>
+                        </p>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                <path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-320q17 0 28.5-11.5T520-560v-160q0-17-11.5-28.5T480-760q-17 0-28.5 11.5T440-720v160q0 17 11.5 28.5T480-520Z"/>
+                            </svg>
+                            <span>End Time: ${data.endTime || "N/A"}</span>
+                        </p>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                <path d="M240-160v-520l240-120 240 120v520H240Zm80-80h320v-394l-160-80-160 80v394Zm160-240q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480ZM320-240h320v-80H320v80Zm80-80h160v-80H400v80Zm-80 80v-80 80Z"/>
+                            </svg>
+                            <span>Distance: ${data.distance || "N/A"} km</span>
+                        </p>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                <path d="M160-120v-640q0-33 23.5-56.5T240-840h240q33 0 56.5 23.5T560-760v280h40q33 0 56.5 23.5T680-400v180q0 17 11.5 28.5T720-180q17 0 28.5-11.5T760-220v-288q-9 5-19 6.5t-21 1.5q-42 0-71-29t-29-71q0-32 17.5-57.5T684-694l-84-84 42-42 148 144q15 15 22.5 35t7.5 41v380q0 42-29 71t-71 29q-42 0-71-29t-29-71v-200h-60v300H160zm80-440h240v-200H240v200zm480 0q17 0 28.5-11.5T760-600q0-17-11.5-28.5T720-640q-17 0-28.5 11.5T680-600q0 17 11.5 28.5T720-560zM240-200h240v-280H240v280zm240 0H240h240z"/>
+                            </svg>
+                            <span>Fuel Used: ${data.fuelUsed || "N/A"} L</span>
+                        </p>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                                <path d="M240-80v-520l240-120 240 120v520H240Zm80-80h320v-394l-160-80-160 80v394Zm160-240q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480ZM320-240h320v-80H320v80Zm80-80h160v-80H400v80Zm-80 80v-80 80Z"/>
+                            </svg>
+                            <span>Fuel Cost: ${data.fuelCost || "N/A"}</span>
+                        </p>
                     `;
                     tripElement.addEventListener("click", () => {
                         window.location.href = `trip_details.html?tripId=${doc.id}`;
@@ -186,22 +223,20 @@
                     tripNumber++;
                 });
             }
-            
+
             window.onload = loadTripReports;
-            
+            document.getElementById("device_Id").innerText = localStorage.getItem("deviceId");
+            document.getElementById("username").innerText = localStorage.getItem("username");
             </script>
-            <style>
-                .trip-report {
-                    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
-                    
-                    padding: 20px;
-                    margin: 10px;
-                    cursor: pointer;
-                    
-                }
-            </style>
-            <h1><span id="device-id">--</span>'s Trip Reports</h1>
+            
+           <br>
             <div id="tripList"></div>
+            
+                
+                <div class="trip-reports-container">
+                    <div id="tripList"></div>
+                </div>
+            
         </div>
     </main>
 

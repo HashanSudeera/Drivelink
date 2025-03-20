@@ -146,7 +146,7 @@
     <main>
         <div class="title-container">
             <h1><span class="highlight">Drive</span>Link</h1>
-            <p>Trip Reports</p>
+            <p>Trip Reports - <span color="red"id='tripName'>..</span></p>
         </div>
         <div>
             <script type="module">
@@ -172,7 +172,7 @@
         const tripRef = doc(db, `tripReports/${deviceId}/trips`, tripId);
         const snapshot = await getDoc(tripRef);
         console.log(tripRef);
-       
+      /*  
         if (snapshot.exists()) {
             const data = snapshot.data();
             console.log("Fetched Data:", data);
@@ -181,14 +181,23 @@
         } else {
             console.log("No trip data found.");
         }
-
+ */
         if (snapshot.exists()) {
             const data = snapshot.data();
             console.log("Fetched Data:", data);
-    
+           /*  endTime fuelCost fuelUsed movingTime startTime tripName */
+
             document.getElementById("tripDate").innerText = data.tripDate || "N/A";
-            document.getElementById("startTime").innerText = data.startTime || "N/A";
             document.getElementById("endTime").innerText = data.endTime || "N/A";
+            
+            document.getElementById("startTime").innerText = data.startTime || "N/A";
+      
+
+            document.getElementById("tripName").innerText = data.tripName || "N/A";
+            document.getElementById("fuelCost").innerText = data.fuelCost || "N/A";
+            document.getElementById("fuelUsed").innerText = data.fuelUsed || "N/A";
+            document.getElementById("movingTime").innerText = data.movingTime || "N/A";
+            document.getElementById("consumptionRate").innerText = data. consumptionRate || "N/A";
             document.getElementById("duration").innerText = data.duration || "N/A";
             document.getElementById("distance").innerText = data.distance || "N/A";
             document.getElementById("topSpeed").innerText = data.topSpeed || "N/A";
@@ -198,17 +207,50 @@
                 return;
             }
     
-            const map = L.map('map').setView([data.route[0].lat, data.route[0].lon], 30);
+            const map = L.map('map');
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            
+
             const latLngs = data.route.map(point => [point.lat, point.lon]);
-            L.polyline(latLngs, { color: 'blue' }).addTo(map);
-            
-        } else {
-            console.log("No trip found with ID:", tripId);
-            document.getElementById("tripDate").innerText = "Trip not found!";
+            const polyline = L.polyline(latLngs, { color: 'blue' }).addTo(map);
+
+            // Fit the map to the bounds of the polyline
+            map.fitBounds(polyline.getBounds());
+
+            // Custom markers
+        const startIcon = L.icon({ iconUrl: 'icon/start-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+        const endIcon = L.icon({ iconUrl: 'icon/end-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+        const stopIcon = L.icon({ iconUrl: 'icon/stop-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+
+        // Add start point marker
+        const startPoint = data.startPoint;
+        if (startPoint && startPoint.length === 2) {
+            L.marker([startPoint[0], startPoint[1]], { icon: startIcon }).addTo(map)
+                .bindPopup('Start Point');
         }
+
+        // Add end point marker
+        const endPoint = data.endPoint;
+        if (endPoint && endPoint.length === 2) {
+            L.marker([endPoint[0], endPoint[1]], { icon: endIcon }).addTo(map)
+                .bindPopup('End Point');
+        }
+
+        // Add stop points markers
+        const stopPoints = data.stopPoints;
+        if (stopPoints && stopPoints.length > 0) {
+            stopPoints.forEach(stop => {
+                L.marker([stop.lat, stop.lon], { icon: stopIcon }).addTo(map)
+                    .bindPopup('Stop Point');
+            });
+        }
+
+    } else {
+        console.log("No trip found with ID:", tripId);
+        document.getElementById("tripDate").innerText = "Trip not found!";
     }
+}
+           
+    
     
     
     // Run function on page load
@@ -239,8 +281,25 @@
                 background-color: #f9f9f9;
             }
         </style> 
-        <h1>User Trips</h1>
-        <div id="map" style="width: 100%; height: 400px;"></div>
+       <br>
+        <div class="trip-timings">
+            
+            <div class="timing-card">
+                <span class="timing-label">Date</span>
+                <span class="timing-value" id="tripDate">--</span>
+                <span> |</span>
+            </div>
+            <div class="timing-card">
+                <span class="timing-label">Time -</span>
+                <span class="timing-value" id="startTime">--</span>
+                <span class="timing-label">-</span>
+            </div>
+            <div class="timing-card">
+                <span class="timing-label"></span>
+                <span class="timing-value" id="endTime">--</span>
+            </div>
+        </div>
+        <div id="map"></div>
     
         <div id="tripList"></div>
             <div class="info">
@@ -253,6 +312,7 @@
                             <span class="value" id="distance">0.00 km</span>
                         </div>
                     </div>
+
                     <div class="card">
                         <img src="icon/total_duration.svg" class="icon" alt="Total Duration Icon">
                         <div>
@@ -260,13 +320,32 @@
                             <span class="value" id="duration">00:00</span>
                         </div>
                     </div>
+
+                    <div class="card">
+                        <img src="icon/distance.svg" class="icon" alt="Distance Icon">
+                        <div>
+                            <span class="infotext">Comsumtion</span><br>
+
+                            <span class="value" id="consumptionRate">0.00 km</span>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <img src="icon/speed.svg" class="icon" alt="Speed Icon">
                         <div>
-                            <span class="infotext">Speed</span><br>
-                            <span class="value" id="speed">0.0 mph</span>
+                            <span class="infotext">FuelUsed</span><br>
+                            <span class="value" id="fuelUsed">0.0 mph</span>
                         </div>
                     </div>
+
+                    <div class="card">
+                        <img src="icon/speed.svg" class="icon" alt="Speed Icon">
+                        <div>
+                            <span class="infotext">FuelCost</span><br>
+                            <span class="value" id="fuelCost">0.0 mph</span>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <img src="icon/total_duration.svg" class="icon" alt="Drive Duration Icon">
                         <div>
@@ -274,6 +353,7 @@
                             <span class="value" id="movingTime">00:00</span>
                         </div>
                     </div>
+
                     <div class="card">
                         <img src="icon/top_speed.svg" class="icon" alt="Top Speed Icon">
                         <div>
@@ -281,6 +361,7 @@
                             <span class="value" id="topSpeed">0.0 mph</span>
                         </div>
                     </div>
+
                     <div class="card">
                         <img src="icon/satellite.svg" class="icon" alt="Region Icon">
                         <div>
