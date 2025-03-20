@@ -132,6 +132,24 @@
                 </ul>
             </li>
             <li>
+                <a href="reminders.html">
+                    <svg  xmlns="http://www.w3.org/2000/svg"  height="24" viewBox="0 -960 960 960" width="24"
+                        fill="#e3e3e3">
+                        <path d="M7.96323356,15.1775211 C7.62849853,15.5122561 7.08578582,15.5122561 6.75105079,15.1775211 C6.41631576,14.842786 6.41631576,14.3000733 6.75105079,13.9653383 L11.8939067,8.82248234 C12.2184029,8.49798619 12.7409054,8.4866328 13.0791905,8.79672747 L18.2220465,13.5110121 C18.5710056,13.8308912 18.5945795,14.3730917 18.2747004,14.7220508 C17.9548212,15.0710098 17.4126207,15.0945838 17.0636617,14.7747046 L12.5257773,10.6149773 L7.96323356,15.1775211 Z" fill="#000000" fill-rule="nonzero" transform="translate(12.500001, 12.000001) rotate(-270.000000) translate(-12.500001, -12.000001) "/>
+                    </svg>
+                    <span>Reminders</span>
+                </a>
+            </li>
+            <li>
+                <a href="history.html">
+                    <svg  xmlns="http://www.w3.org/2000/svg"  height="24" viewBox="0 -960 960 960" width="24"
+                        fill="#e3e3e3">
+                        <path d="M7.96323356,15.1775211 C7.62849853,15.5122561 7.08578582,15.5122561 6.75105079,15.1775211 C6.41631576,14.842786 6.41631576,14.3000733 6.75105079,13.9653383 L11.8939067,8.82248234 C12.2184029,8.49798619 12.7409054,8.4866328 13.0791905,8.79672747 L18.2220465,13.5110121 C18.5710056,13.8308912 18.5945795,14.3730917 18.2747004,14.7220508 C17.9548212,15.0710098 17.4126207,15.0945838 17.0636617,14.7747046 L12.5257773,10.6149773 L7.96323356,15.1775211 Z" fill="#000000" fill-rule="nonzero" transform="translate(12.500001, 12.000001) rotate(-270.000000) translate(-12.500001, -12.000001) "/>
+                    </svg>
+                    <span>History</span>
+                </a>
+            </li>
+            <li>
                 <a href="profile.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
                         fill="#e3e3e3">
@@ -296,9 +314,9 @@
                 let polyline = L.polyline([], { color: 'red' }).addTo(map);
 
                 // Custom markers
-                const startIcon = L.icon({ iconUrl: 'start-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
-                const endIcon = L.icon({ iconUrl: 'end-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
-                const stopIcon = L.icon({ iconUrl: 'stop-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+                const startIcon = L.icon({ iconUrl: 'icon/start-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+                const endIcon = L.icon({ iconUrl: 'icon/end-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+                const stopIcon = L.icon({ iconUrl: 'icon/stop-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
 
                 // Tracking variables
                 let trackingActive = false;

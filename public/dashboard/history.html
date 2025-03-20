@@ -5,13 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboardstyle.css">
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <script src="../app.js"></script>
-    <script src="dashboard.js" defer></script>
+    <script src="dashboard.js"defer></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="dashboardstyle.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+   
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    
 </head>
 
 <body id="dashboardPage">
@@ -69,8 +78,7 @@
                     <span>Fuel Status</span>
                 </a>
             </li>
-            
-            <li class="active">
+            <li>
                 <a href="batterystatus.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
                         fill="#e3e3e3">
@@ -90,7 +98,7 @@
                     <span>Live Tracking</span>
                 </a>
             </li>
-           
+         
             <li>
                 <a href="tripmange.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
@@ -137,7 +145,7 @@
                     <span>Reminders</span>
                 </a>
             </li>
-            <li>
+            <li class="active">
                 <a href="history.html">
                     <svg  xmlns="http://www.w3.org/2000/svg"  height="24" viewBox="0 -960 960 960" width="24"
                         fill="#e3e3e3">
@@ -146,6 +154,7 @@
                     <span>History</span>
                 </a>
             </li>
+            
             
             <li>
                 <a href="profile.html">
@@ -165,119 +174,9 @@
         <span id="toastMessage">DriveLink</span>
     </div>
 
-    <!-- ======================================================================================================================-->
+   
     <main>
-        <div class="title-container">
-            <h1><span class="highlight">Drive</span>Link</h1>
-            <p>Battery Status</p>
-        </div>
-        <div class="main-container">
-            <div class="box">
-                <div class="battery">
-                    <h2 style="color: #eeeeee;">Battery</h2><br>
 
-                    <div class="battery-head"></div>
-                    <div class="battery-body">
-                        <i class="fas fa-bolt"></i>
-                        <div class="charge"></div>
-                    </div>
-                    <p id="battery-percentage">Battery: 0%</p>
-                   
-                </div>
-            </div>
-            <div class="box">
-                <div class="fuel-details">
-                    <h2>Battery Details</h2>
-                    <div class="sub-cal">
-                        <p>Battery Helth : </p>
-                        <p>Battery Power (W) : </p>
-                        <p>Estimated Battery Life : </p>
-                        <p>Battery Charging Time : </p>
-                    </div>
-
-
-
-                </div>
-            </div>
-
-        </div>
-        <script type="module">
-
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-            import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-            let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
-
-            console.log(deviceId);
-
-
-
-            const app = initializeApp(firebaseConfig);
-            const firestore = getFirestore(app);
-            const db = getDatabase(app);
-            const userId = deviceId;
-
-            const userRef = ref(db, `${userId}/battery`);
-            onValue(userRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    let battery_level = data.value;
-
-                    console.log(battery_level);
-
-
-                    // ✅ Only update UI if elements exist
-                    if (document.getElementById("text1")) document.getElementById("text1").innerText = data.value;
-
-                    setTimeout(() => updateBattery(battery_level), 500);
-
-
-                }
-                function updateBattery(level) {
-                    const charge = document.querySelector(".charge");
-                    const batteryPercentage = document.getElementById("battery-percentage");
-                    console.log("Updating battery level...");
-
-                    // Ensure elements exist
-                    if (!charge || !batteryPercentage) {
-                        console.error("Error: Battery elements not found in the DOM!");
-                        return;
-                    }
-
-                    // Ensure level is valid
-                    if (level === undefined || level === null) {
-                        console.error("Error: Battery level is undefined or null.");
-                        return;
-                    }
-
-                    // Calculate battery level
-                    let cal_level = (level / 12) * 100;
-                    cal_level = Math.max(0, Math.min(cal_level, 100)); // Ensure value is between 0-100
-
-                    console.log("Calculated Battery Level:", cal_level);
-
-                    // Update battery UI
-                    charge.style.height = cal_level + "%";
-
-                    if (cal_level <= 25) {
-                        charge.style.background = "var(--red)";
-                    } else if (cal_level <= 50) {
-                        charge.style.background = "var(--orange)";
-                    } else if (cal_level <= 75) {
-                        charge.style.background = "var(--yellow)";
-                    } else {
-                        charge.style.background = "var(--green)";
-                    }
-
-                    batteryPercentage.innerText = `Battery: ${Math.round(cal_level)}%`;
-                }
-            });
-        </script>
     </main>
-
-
-
 </body>
-
 </html>
