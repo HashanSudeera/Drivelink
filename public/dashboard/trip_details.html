@@ -149,7 +149,7 @@
             <p>Trip Reports - <span color="red"id='tripName'>..</span></p>
         </div>
         <div>
-            <script type="module">
+         <script type="module">   
                 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
                 import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
                 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
@@ -193,13 +193,13 @@
             document.getElementById("startTime").innerText = data.startTime || "N/A";
       
 
-            document.getElementById("tripName").innerText = data.tripName || "N/A";
-            document.getElementById("fuelCost").innerText = data.fuelCost || "N/A";
-            document.getElementById("fuelUsed").innerText = data.fuelUsed || "N/A";
-            document.getElementById("movingTime").innerText = data.movingTime || "N/A";
-            document.getElementById("consumptionRate").innerText = data. consumptionRate || "N/A";
-            document.getElementById("duration").innerText = data.duration || "N/A";
-            document.getElementById("distance").innerText = data.distance || "N/A";
+            document.getElementById("tripName").innerText =  data.tripName || "N/A";
+            document.getElementById("fuelCost").innerText = "Rs. "+ data.fuelCost || "N/A";
+            document.getElementById("fuelUsed").innerText = data.fuelUsed + " L" || "N/A";
+            document.getElementById("movingTime").innerText = data.movingTime + ' min'|| "N/A";
+            document.getElementById("consumptionRate").innerText = data. consumptionRate + " L/100 km" || "N/A";
+            document.getElementById("duration").innerText = data.duration + ' min'|| "N/A";
+            document.getElementById("distance").innerText = data.distance +' Km'|| "N/A";
             document.getElementById("topSpeed").innerText = data.topSpeed || "N/A";
     
             if (!document.getElementById("map")) {
@@ -349,7 +349,7 @@
                     <div class="card">
                         <img src="icon/total_duration.svg" class="icon" alt="Drive Duration Icon">
                         <div>
-                            <span class="infotext">Drive duration</span><br>
+                            <span class="infotext">Moving Time</span><br>
                             <span class="value" id="movingTime">00:00</span>
                         </div>
                     </div>
@@ -362,13 +362,7 @@
                         </div>
                     </div>
 
-                    <div class="card">
-                        <img src="icon/satellite.svg" class="icon" alt="Region Icon">
-                        <div>
-                            <span class="infotext">satellite</span><br>
-                            <span class="value" id="satellites">0</span>
-                        </div>
-                    </div>
+                    
                 </div>
         
 
