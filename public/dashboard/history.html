@@ -17,9 +17,93 @@
     <link rel="stylesheet" href="dashboardstyle.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-   
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+    <style>
+        /* styles.css */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text */
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .chart-container {
+            background: #1e1e1e; /* Dark container background */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #ffffff; /* White heading */
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsive Grid for Desktop */
+        @media (min-width: 768px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Fuel Tank Styles */
+        .fuel-tank {
+            width: 100%;
+            height: 20px;
+            background-color: #444;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .fuel-level {
+            height: 100%;
+            background-color: #4caf50;
+            transition: width 0.5s ease;
+        }
+
+        /* Badges Styles */
+        .badges-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .badge {
+            background-color: #4caf50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
     
 </head>
 
@@ -176,6 +260,99 @@
 
    
     <main>
+        <div class="dashboard">
+            <!-- Fuel History Chart -->
+            <div class="chart-container">
+                <h2>Fuel History</h2>
+                <canvas id="fuelChart"></canvas>
+            </div>
+
+            <!-- Battery History Chart -->
+            <div class="chart-container">
+                <h2>Battery History</h2>
+                <canvas id="batteryChart"></canvas>
+            </div>
+
+            <!-- Consumption Rate Chart -->
+            <div class="chart-container">
+                <h2>Consumption Rate</h2>
+                <canvas id="consumptionChart"></canvas>
+            </div>
+
+            <!-- Fuel Efficiency Game -->
+            <div class="chart-container">
+                <h2>Fuel Efficiency Game</h2>
+                <p id="efficiencyScore">Your Efficiency Score: 0</p>
+            </div>
+
+            <!-- Virtual Fuel Tank -->
+            <div class="chart-container">
+                <h2>Virtual Fuel Tank</h2>
+                <div class="fuel-tank">
+                    <div id="fuelTank" class="fuel-level"></div>
+                </div>
+                <p id="fuelTankText">Fuel Level: 100%</p>
+            </div>
+
+            <!-- Eco-Friendly Badges -->
+            <div class="chart-container">
+                <h2>Eco-Friendly Badges</h2>
+                <div id="badges" class="badges-container"></div>
+            </div>
+        </div>
+
+        <script>
+// Function to generate fake data for a given date
+const generateFakeData = (date) => {
+  return {
+    date: date,
+    avg_battery: parseFloat((Math.random() * 20 + 10).toFixed(2)), // Random battery level between 10 and 30
+    avg_consumption: parseFloat((Math.random() * 10 + 15).toFixed(2)), // Random consumption between 15 and 25
+    distance_km: Math.floor(Math.random() * 20) + 5, // Random distance between 5 and 25 km
+    driving_duration: Math.floor(Math.random() * 10) + 2, // Random duration between 2 and 12 hours
+    fuel_added: Math.floor(Math.random() * 10), // Random fuel added between 0 and 10 liters
+    fuel_cost: Math.floor(Math.random() * 1000) + 500, // Random fuel cost between 500 and 1500
+    fuel_used: Math.floor(Math.random() * 5) + 1, // Random fuel used between 1 and 6 liters
+  };
+};
+
+// Function to add data incrementally with a delay
+const addIncrementalData = async (startDate, totalDays) => {
+  let currentDate = new Date(startDate);
+
+  for (let i = 0; i < totalDays; i++) {
+    // Generate a date string in "YYYY.M.D" format
+    const dateString = `${currentDate.getFullYear()}.${currentDate.getMonth() + 1}.${currentDate.getDate()}`;
+
+    // Generate fake data for the current date
+    const data = generateFakeData(dateString);
+
+    try {
+      // Add the data to Firestore
+      await db.collection("dailyReports")
+        .doc("user10")
+        .collection("reports")
+        .doc(dateString)
+        .set(data);
+
+      console.log(`Added data for ${dateString}`);
+    } catch (error) {
+      console.error(`Error adding data for ${dateString}:`, error);
+    }
+
+    // Increment the date by 1 day
+    currentDate.setDate(currentDate.getDate() + 1);
+
+    // Add a delay of 1 day (24 hours) before adding the next entry
+    await new Promise((resolve) => setTimeout(resolve,1000)); // 24 hours delay
+  }
+};
+
+// Start adding data from a specific date
+const startDate = "2025-03-01"; // Start date in YYYY-MM-DD format
+const totalDays = 20; // Number of data entries to add
+addIncrementalData(startDate, totalDays);
+        </script>
 
     </main>
 </body>
