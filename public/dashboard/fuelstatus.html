@@ -146,99 +146,121 @@
 
     <!-- ======================================================================================================================-->
     <main>
-        <div class="title-container">
-            <h1><span class="highlight">Drive</span>Link</h1>
-            <p>Fuel Status</p>
-            <span id="device-id"></span>
-        </div>
-        <div class="main-container">
-            <div class="box">
-                <div class="container1">
-                    <h2>Fuel Gauge</h2><br>
-
-                    <div class="fuel-container">
-                        <div class="water" id="waterLevel">
-                            <div class="wave"></div>
-                            <div class="wave"></div>
-                        </div>
-                        <span class="fuel-text" id="fuelText">0%</span>
+    <div class="title-container">
+        <h1><span class="highlight">Drive</span>Link</h1>
+        <p>Fuel Status</p>
+        <span id="device-id"></span>
+    </div>
+    <div class="main-container">
+        <div class="box">
+            <div class="container1">
+                <h2>Fuel Gauge</h2><br>
+                <div class="fuel-container">
+                    <div class="water" id="waterLevel">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
                     </div>
-
-                </div>
-            </div>
-            <div class="box">
-                <div class="fuel-details">
-                    <h2>Fuel Details</h2>
-                    <div class="sub-cal">
-                        <p>Fuel Level : </p>
-                        <p>Fuel Consumption Rate : </p>
-                        <p>Fuel Efficiency (km/L) : </p>
-                        <p>Fuel Cost Estimation : </p>
-                        <p><span id="text1">0</span></p>
-                    </div>
+                    <span class="fuel-text" id="fuelText">0%</span>
                 </div>
             </div>
         </div>
-        <script type="module">
+        <div class="box">
+            <div class="fuel-details">
+                <h2>Fuel Details</h2>
+                <div class="sub-cal">
+                    <p>Fuel Level: <span id="fuel-level">0%</span></p>
+                    <p>Fuel Consumption Rate: <span id="fuel-consumption-rate">0 L/h</span></p>
+                    <p>Fuel Efficiency (km/L): <span id="fuel-efficiency">0 km/L</span></p>
+                    <p>Fuel Cost Estimation: <span id="fuel-cost-estimation">0 units</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-            import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
+        console.log(deviceId);
+        let min_value = parseFloat(localStorage.getItem("min_value"));
+        let max_value = parseFloat(localStorage.getItem("max_value"));
+        let usernametag = localStorage.getItem("username");
 
-            let deviceId = localStorage.getItem("deviceId"); // ✅ Change 'const' to 'let'
+        const app = initializeApp(firebaseConfig);
+        const firestore = getFirestore(app);
+        const db = getDatabase(app);
+        const userId = deviceId;
 
-            console.log(deviceId);
-            let min_value = parseFloat(localStorage.getItem("min_value"));
-            let max_value = parseFloat(localStorage.getItem("max_value"));
-            let usernametag = localStorage.getItem("username"); 
+        const userRef = ref(db, `${userId}/fuel_sensor`);
+        let previousFuelLevel = null;
+        let previousTime = null;
 
-            const app = initializeApp(firebaseConfig);
-            const firestore = getFirestore(app);
-            const db = getDatabase(app);
-            const userId = deviceId;
+        onValue(userRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                let current_level = data.value;
 
-            const userRef = ref(db, `${userId}/fuel_sensor`);
-            onValue(userRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    let current_level = data.value;
+                console.log(current_level);
 
-                    console.log(current_level);
+                // Update fuel level UI
+                updateFuelLevel(min_value, max_value, current_level);
 
+                // Calculate and update fuel details
+                updateFuelDetails(current_level);
+            }
+        });
 
-                    // ✅ Only update UI if elements exist
-                    if (document.getElementById("text1")) document.getElementById("text1").innerText = data.value;
+        function updateFuelLevel(min_level, max_level, current_level) {
+            // Prevent division by zero
+            if (max_level === min_level) {
+                console.error("Max level and min level are the same. Cannot calculate fuel level.");
+                return;
+            }
 
-                    setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 500);
+            // Calculate fuel level percentage
+            let fuel_level = ((current_level - min_level) / (max_level - min_level)) * 100;
 
+            // Ensure the fuel level stays between 0% and 100%
+            fuel_level = Math.max(0, Math.min(100, fuel_level));
 
-                }
-                function updateFuelLevel(min_level, max_level, current_level) {
-                    // Prevent division by zero
-                    if (max_level === min_level) {
-                        console.error("Max level and min level are the same. Cannot calculate fuel level.");
-                        return;
-                    }
+            // Update UI elements
+            const water = document.getElementById("waterLevel");
+            const text = document.getElementById("fuelText");
 
-                    // Calculate fuel level percentage
-                    let fuel_level = ((current_level - min_level) / (max_level - min_level)) * 100;
+            if (water && text) {
+                water.style.height = fuel_level + "%";
+                text.innerText = fuel_level.toFixed(1) + "%"; // Show 1 decimal place
+            } else {
+                console.error("UI elements not found: waterLevel or fuelText");
+            }
+        }
 
-                    // Ensure the fuel level stays between 0% and 100%
-                    fuel_level = Math.max(0, Math.min(100, fuel_level));
+        function updateFuelDetails(current_level) {
+            // Constants for calculations
+            const fuelPricePerLiter = 100; // Fuel price per liter in units (adjust as needed)
+            const tankCapacity = max_value - min_value; // Tank capacity in liters
+            const currentFuelLevel = ((current_level - min_value) / (max_value - min_value)) * 100; // Current fuel level in percentage
+            const fuelUsed = tankCapacity * (1 - currentFuelLevel / 100); // Fuel used in liters
+            const timeElapsed = 1; // Time elapsed in hours (adjust as needed)
+            const distanceTraveled = 50; // Distance traveled in km (adjust as needed)
 
-                    // Update UI elements
-                    const water = document.getElementById("waterLevel");
-                    const text = document.getElementById("fuelText");
+            // Fuel Consumption Rate
+            const fuelConsumptionRate = fuelUsed / timeElapsed;
+            document.getElementById("fuel-consumption-rate").innerText = `${fuelConsumptionRate.toFixed(2)} L/h`;
 
-                    if (water && text) {
-                        water.style.height = fuel_level + "%";
-                        text.innerText = fuel_level.toFixed(1) + "%"; // Show 1 decimal place
-                    } else {
-                        console.error("UI elements not found: waterLevel or fuelText");
-                    }
-                }
-            });
-        </script>
-    </main>
+            // Fuel Efficiency (km/L)
+            const fuelEfficiency = distanceTraveled / fuelUsed;
+            document.getElementById("fuel-efficiency").innerText = `${fuelEfficiency.toFixed(2)} km/L`;
+
+            // Fuel Cost Estimation
+            const fuelCostEstimation = fuelUsed * fuelPricePerLiter;
+            document.getElementById("fuel-cost-estimation").innerText = `${fuelCostEstimation.toFixed(2)} units`;
+
+            // Update fuel level
+            document.getElementById("fuel-level").innerText = `${currentFuelLevel.toFixed(1)}%`;
+        }
+    </script>
+</main>
 </body>
 </html>
