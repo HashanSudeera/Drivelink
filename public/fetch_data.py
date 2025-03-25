@@ -18,6 +18,3 @@ for doc in docs:
 
 df = pd.DataFrame(data)
 print(df.head())  # Check the data
-
-# Save Data to CSV (optional)
-df.to_csv("daily_reports.csv", index=False)

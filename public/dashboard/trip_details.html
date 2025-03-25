@@ -150,127 +150,133 @@
         </div>
         <div>
          <script type="module">   
-                import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-                import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-                import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-                import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-           
-            
-    
-       
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    
-    async function loadTripData() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tripId = urlParams.get("tripId");
-    
-        console.log("Fetching trip data for:", tripId);
-        const deviceId = localStorage.getItem("deviceId");
-        console.log(deviceId);
-        console.log(tripId);
-        const tripRef = doc(db, `tripReports/${deviceId}/trips`, tripId);
-        const snapshot = await getDoc(tripRef);
-        console.log(tripRef);
-      /*  
-        if (snapshot.exists()) {
-            const data = snapshot.data();
-            console.log("Fetched Data:", data);
-            document.getElementById("tripDate").innerText = data.tripDate || "N/A";
-            document.getElementById("startTime").innerText = data.startTime || "N/A";
-        } else {
-            console.log("No trip data found.");
-        }
- */
-        if (snapshot.exists()) {
-            const data = snapshot.data();
-            console.log("Fetched Data:", data);
-           /*  endTime fuelCost fuelUsed movingTime startTime tripName */
+              import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getStorage, ref, deleteObject, getMetadata } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
 
-            document.getElementById("tripDate").innerText = data.tripDate || "N/A";
-            document.getElementById("endTime").innerText = data.endTime || "N/A";
-            
-            document.getElementById("startTime").innerText = data.startTime || "N/A";
-      
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-            document.getElementById("tripName").innerText =  data.tripName || "N/A";
-            document.getElementById("fuelCost").innerText = "Rs. "+ data.fuelCost || "N/A";
-            document.getElementById("fuelUsed").innerText = data.fuelUsed + " L" || "N/A";
-            document.getElementById("movingTime").innerText = data.movingTime + ' min'|| "N/A";
-            document.getElementById("consumptionRate").innerText = data. consumptionRate + " L/100 km" || "N/A";
-            document.getElementById("duration").innerText = data.duration + ' min'|| "N/A";
-            document.getElementById("distance").innerText = data.distance +' Km'|| "N/A";
-            document.getElementById("topSpeed").innerText = data.topSpeed || "N/A";
-    
-            if (!document.getElementById("map")) {
-                console.error("Map container not found!");
-                return;
-            }
-    
+let tripId; // Store tripId globally for use in the delete function
+
+async function loadTripData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    tripId = urlParams.get("tripId"); // Assign to the global variable
+    const deviceId = localStorage.getItem("deviceId");
+
+    console.log("Fetching trip data for:", tripId);
+    const tripRef = doc(db, `tripReports/${deviceId}/trips`, tripId);
+    const snapshot = await getDoc(tripRef);
+
+    if (snapshot.exists()) {
+        const data = snapshot.data();
+        console.log("Fetched Data:", data);
+
+        // Populate trip details in the UI
+        document.getElementById("tripDate").innerText = data.tripDate || "N/A";
+        document.getElementById("endTime").innerText = data.endTime || "N/A";
+        document.getElementById("startTime").innerText = data.startTime || "N/A";
+        document.getElementById("tripName").innerText = data.tripName || "N/A";
+        document.getElementById("fuelCost").innerText = "Rs. " + data.fuelCost || "N/A";
+        document.getElementById("fuelUsed").innerText = data.fuelUsed + " L" || "N/A";
+        document.getElementById("movingTime").innerText = data.movingTime + ' min' || "N/A";
+        document.getElementById("consumptionRate").innerText = data.consumptionRate + " L/100 km" || "N/A";
+        document.getElementById("duration").innerText = data.duration + ' min' || "N/A";
+        document.getElementById("distance").innerText = data.distance + ' Km' || "N/A";
+        document.getElementById("topSpeed").innerText = data.topSpeed || "N/A";
+
+        // Render the map
+        if (document.getElementById("map")) {
             const map = L.map('map');
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
             const latLngs = data.route.map(point => [point.lat, point.lon]);
             const polyline = L.polyline(latLngs, { color: 'blue' }).addTo(map);
-
-            // Fit the map to the bounds of the polyline
             map.fitBounds(polyline.getBounds());
 
-            // Custom markers
-        const startIcon = L.icon({ iconUrl: 'icon/start-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
-        const endIcon = L.icon({ iconUrl: 'icon/end-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
-        const stopIcon = L.icon({ iconUrl: 'icon/stop-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+            // Add markers for start, end, and stop points
+            const startIcon = L.icon({ iconUrl: 'icon/start-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+            const endIcon = L.icon({ iconUrl: 'icon/end-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+            const stopIcon = L.icon({ iconUrl: 'icon/stop-marker.png', iconSize: [25, 41], iconAnchor: [12, 41] });
 
-        // Add start point marker
-        const startPoint = data.startPoint;
-        if (startPoint && startPoint.length === 2) {
-            L.marker([startPoint[0], startPoint[1]], { icon: startIcon }).addTo(map)
-                .bindPopup('Start Point');
+            if (data.startPoint && data.startPoint.length === 2) {
+                L.marker([data.startPoint[0], data.startPoint[1]], { icon: startIcon }).addTo(map)
+                    .bindPopup('Start Point');
+            }
+
+            if (data.endPoint && data.endPoint.length === 2) {
+                L.marker([data.endPoint[0], data.endPoint[1]], { icon: endIcon }).addTo(map)
+                    .bindPopup('End Point');
+            }
+
+            if (data.stopPoints && data.stopPoints.length > 0) {
+                data.stopPoints.forEach(stop => {
+                    L.marker([stop.lat, stop.lon], { icon: stopIcon }).addTo(map)
+                        .bindPopup('Stop Point');
+                });
+            }
         }
-
-        // Add end point marker
-        const endPoint = data.endPoint;
-        if (endPoint && endPoint.length === 2) {
-            L.marker([endPoint[0], endPoint[1]], { icon: endIcon }).addTo(map)
-                .bindPopup('End Point');
-        }
-
-        // Add stop points markers
-        const stopPoints = data.stopPoints;
-        if (stopPoints && stopPoints.length > 0) {
-            stopPoints.forEach(stop => {
-                L.marker([stop.lat, stop.lon], { icon: stopIcon }).addTo(map)
-                    .bindPopup('Stop Point');
-            });
-        }
-
     } else {
         console.log("No trip found with ID:", tripId);
         document.getElementById("tripDate").innerText = "Trip not found!";
     }
 }
-           
-    
-    
-    
-    // Run function on page load
-    
-    window.onload = () => {
-        if (typeof L === "undefined") {
-            console.error("Leaflet failed to load!");
-            return;
+
+// Function to delete the trip report
+async function deleteTrip() {
+    const deviceId = localStorage.getItem("deviceId");
+    const tripRef = doc(db, `tripReports/${deviceId}/trips`, tripId);
+
+    try {
+        // Delete the trip document from Firestore
+        await deleteDoc(tripRef);
+        console.log("Trip deleted successfully!");
+
+        // Delete associated files from Firebase Storage (if any)
+        const fileRef = ref(storage, `tripReports/${deviceId}/trips/${tripId}/file`);
+        
+        try {
+            // Check if the file exists
+            await getMetadata(fileRef);
+            // If the file exists, delete it
+            await deleteObject(fileRef);
+            console.log("File deleted successfully!");
+        } catch (error) {
+            if (error.code === "storage/object-not-found") {
+                console.log("No file found to delete.");
+            } else {
+                console.error("Error deleting file:", error);
+            }
         }
-    
-        if (!document.getElementById("map")) {
-            console.error("Map container not found!");
-            return;
-        }
-    
-        loadTripData(); // Now it's safe to load data
-    };
-    
-    
-            </script>
+
+        // Redirect to the trip reports page
+        window.location.href = "tripreport.html"; // Redirect to the trip reports page
+    } catch (error) {
+        console.error("Error deleting trip:", error);
+        alert("Failed to delete trip report. Please try again.");
+    }
+}
+
+// Attach the delete function to the delete button
+document.getElementById("deleteButton").addEventListener("click", deleteTrip);
+
+// Run function on page load
+window.onload = () => {
+    if (typeof L === "undefined") {
+        console.error("Leaflet failed to load!");
+        return;
+    }
+
+    if (!document.getElementById("map")) {
+        console.error("Map container not found!");
+        return;
+    }
+
+    loadTripData(); // Load trip data
+};
+</script>
         
         <style>
             .trip-item {
@@ -280,6 +286,20 @@
                 cursor: pointer;
                 background-color: #f9f9f9;
             }
+            .delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.delete-btn:hover {
+    background-color: #ff1a1a;
+}
         </style> 
        <br>
         <div class="trip-timings">
@@ -369,6 +389,10 @@
                 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
                 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        </div>
+        <div class="trip-timings">
+            <!-- Existing trip details -->
+            <button id="deleteButton" class="delete-btn">Delete Report</button>
         </div>
     </main>
 

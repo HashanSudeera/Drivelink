@@ -1382,7 +1382,7 @@ body {
 
 
 .reminders-container {
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -1407,11 +1407,11 @@ button:hover {
 /* Recent Reminders Section */
 .recent-reminders {
     margin-top: 20px;
-    padding: 10px;
+    padding: 50px;
     
     color: white;
-    margin-bottom: 20px;
-    background-color: #000000;
+    margin-bottom: 0px;
+   
     border-radius: 15px;
     transition: background-color 0.3s ease;
 }
@@ -1419,19 +1419,21 @@ button:hover {
 .recent-reminders-list {
     display: flex;
     gap: 10px;
-    
-    margin-top: 10px;
+   
+    margin-top: 30px;
     justify-content: center;
-    overflow-x: auto;
+    overflow-x:initial;
     padding-bottom: 10px;
 }
 
 .recent-reminder {
     background-color: #2e2e2e;
-    padding: 15px;
-    width: 50px;
+    padding: 10px;
+    width: 90%;
+ 
+    
     border-radius: 8px;
-    box-shadow: 0 2px 20px rgb(70, 70, 70);
+    box-shadow: 0 2px 20px rgb(36, 36, 36);
     border-color: 1px var(--accent-clr);
   
     text-align: center;
@@ -1439,6 +1441,7 @@ button:hover {
 
 .recent-reminder h4 {
     margin: 0;
+    
     font-size: 18px;
 
 }
@@ -1477,7 +1480,7 @@ button:hover {
 
 .reminder-card {
     background-color: #2e2e2e;
-    padding: 20px;
+    padding: 10px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-left: 5px solid var(--reminder-color, #007bff);
@@ -1523,6 +1526,7 @@ button:hover {
     .recent-reminders-list {
         flex-direction: column;
         gap: 10px;
+        width: 100%;
     }
 
     .recent-reminder {
@@ -1530,6 +1534,6 @@ button:hover {
     }
 
     .reminders-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 2fr;
     }
 }
