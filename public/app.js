@@ -246,7 +246,7 @@ function loadSensorData(deviceId) {
     sensorRef.on("value", (snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-            document.getElementById("ultrasonic-value").innerText = `Distance: ${data.ultrasonic.value} cm`;
+           
             document.getElementById("led-status").innerText = `LED Status: ${data.led_status.value}`;
 
             // Declare current_level correctly
@@ -265,7 +265,7 @@ function loadSensorData(deviceId) {
             
 
         } else {
-            document.getElementById("ultrasonic-value").innerText = "No data available";
+            
             document.getElementById("led-status").innerText = "LED Status: --";
         }
     });
