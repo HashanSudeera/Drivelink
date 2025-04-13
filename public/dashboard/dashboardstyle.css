@@ -1299,7 +1299,7 @@ body {
     color: #ffffff;
 }
 #reminderForm select,
-#reminderForm input[type="text"],
+#reminderForm input[type="text"],  
 #reminderForm input[type="date"],
 #reminderForm input[type="time"],
 #reminderForm textarea {
@@ -1363,12 +1363,14 @@ body {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .addreminder {
-        max-width: 200px;
+        max-width: 300px;
+        height: auto;
         margin: 0 auto;
         padding: 20px;
     }
     .container {
         padding: 10px;
+        height: 200px;
     }
     #reminderForm select,
     #reminderForm input[type="text"],
@@ -1384,6 +1386,7 @@ body {
 .reminders-container {
     max-width: 1000px;
     margin: 0 auto;
+    
     padding: 20px;
 }
 
@@ -1536,4 +1539,15 @@ button:hover {
     .reminders-grid {
         grid-template-columns: 2fr;
     }
+}
+
+.tracking-info {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgb(0, 0, 0);
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }

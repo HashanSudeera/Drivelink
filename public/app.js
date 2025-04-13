@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Firebase Configuration
-var firebaseConfig = {
+// Your web app's Firebase configuration
+const firebaseConfig = {
     apiKey: "AIzaSyAa9bahojYMk_1meGG8YCgUDFNj6MEHPeI",
     authDomain: "espclientsnew.firebaseapp.com",
     databaseURL: "https://espclientsnew-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -38,7 +39,7 @@ var firebaseConfig = {
     storageBucket: "espclientsnew.firebasestorage.app",
     messagingSenderId: "196283041268",
     appId: "1:196283041268:web:6f24e1202238bf01fea5a1"
-};
+  };
 
 // Initialize Firebase
 if (!firebase.apps.length) {
