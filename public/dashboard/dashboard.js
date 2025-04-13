@@ -8,7 +8,7 @@ function toggleSidebar() {
     closeAllSubMenus()
 }
 
-function toggleSubMenu(button) {
+/* function toggleSubMenu(button) {
 
     if (!button.nextElementSibling.classList.contains('show')) {
         closeAllSubMenus()
@@ -28,10 +28,24 @@ function closeAllSubMenus() {
         ul.classList.remove('show')
         ul.previousElementSibling.classList.remove('rotate')
     })
-}
+} */
 
 /*trip manger funtions*/
 // Import Firebase
 
+// Sample event listeners for demonstration
+document.getElementById('logout-button').addEventListener('click', function() {
+    showToast('Logging out...');
+    setTimeout(function() {
+        window.location.href = 'login.html';
+    }, 1500);
+});
+
+document.getElementById('header-logout').addEventListener('click', function() {
+    showToast('Logging out...');
+    setTimeout(function() {
+        window.location.href = 'login.html';
+    }, 1500);
+});
 
 
