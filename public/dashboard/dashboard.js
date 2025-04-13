@@ -32,7 +32,7 @@ function closeAllSubMenus() {
 
 /*trip manger funtions*/
 // Import Firebase
-
+/* 
 // Sample event listeners for demonstration
 document.getElementById('logout-button').addEventListener('click', function() {
     showToast('Logging out...');
@@ -49,3 +49,4 @@ document.getElementById('header-logout').addEventListener('click', function() {
 });
 
 
+ */
