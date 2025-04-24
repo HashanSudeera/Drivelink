@@ -23,123 +23,123 @@
 <body id="dashboardPage" class="dark-mode">
     <div class="page-container">
         <nav id="sidebar" class="expanded">
-           
-                <div class="sidebar-header">
-                    <div class="logo-container">
-                        <img src="logo.png" alt="DriveLink" class="logo-img">
-                        
-                        <span class="logo-text">
-                            <span class="highlight">Drive</span><span class="highlight2">link</span>
-                        </span>
 
-                    </div>
-                    <button id="toggle-btn" onclick="toggleSidebar()">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="logo.png" alt="DriveLink" class="logo-img">
+
+                    <span class="logo-text">
+                        <span class="highlight">Drive</span><span class="highlight2">link</span>
+                    </span>
+
                 </div>
-                
-       <!--  https://fontawesome.com/search?q=user&o=r&ic=free&s=solid&it=round&ip=classic -->
-      
-        <ul class="sidebar-menu">
-          
-            <li>
-               
-                <p class="username-text" id="usernametag">Hi, -- !</p>
-                <div class="divider"></div>
-           
-              
-            </li>
-           
-            <li class="active">
-                <a href="dashboard.html">
-                    <i class="fa-solid fa-solar-panel"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-           
-            <li>
-                <a href="fuelstatus.html">
-                    <i class="fa-solid fa-gas-pump"></i>
-                    <span>Fuel Status</span>
-                </a>
-            </li>
-            <li>
-                <a href="batterystatus.html">
-                    <i class="fa-solid fa-car-battery"></i>
-                    <span>Battery Status</span>
-                </a>
-            </li>
-            <li>
-                <a href="livetraking.html">
-                    <i class="fa-solid fa-map-location-dot"></i>
-                    </svg>
-                    <span>Live Tracking</span>
-                </a>
-            </li>
+                <button id="toggle-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <!--  https://fontawesome.com/search?q=user&o=r&ic=free&s=solid&it=round&ip=classic -->
+
+            <ul class="sidebar-menu">
+
+                <li>
+
+                    <p class="username-text" id="usernametag">Hi, -- !</p>
+                    <div class="divider"></div>
 
 
-            <li>
-                <a href="tripmange.html">
-                    <i class="fa-solid fa-compass"></i>
-                    <span>Trip Manage</span>
-                </a>
-            </li>
-            <li>
-                <a href="vehicalhelth.html">
-                    <i class="fa-solid fa-heart-pulse"></i>
-                    <span>Vehical Helth</span>
-                </a>
-            </li>
-            <li class="has-submenu">
-                <a href="#" onclick="toggleSubMenu(this)">
-                    <i class="fa-solid fa-flask-vial"></i>
-                    <span>Reports</span>
-                    <i class="fas fa-chevron-down arrow"></i>
-                </a>
-                <ul class="sub-menu">
-                    <li><a href="tripreport.html"> Trip Report</a></li>
-                    <li><a href="fuelreport.html"> Fuel Report</a></li>
-                    <li><a href="batteryreport.html"> Battery Report</a></li>
-                </ul>
-            </li>
-         
-            <li>
-                <a href="reminders.html">
-                    <i class="fa-solid fa-bell"></i>
-                    <span>Reminders</span>
-                </a>
-            </li>
-            <li>
-                <a href="history.html">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                    <span>History</span>
-                </a>
-            </li>
-            <li>
-                <a href="profile.html">
-                    <i class="fa-solid fa-user-large"></i>
-                    <span>Profile</span>
-                </a>
-            </li>
-        </ul>
-        <div class="divider"></div>
+                </li>
 
-        <div class="sidebar-footer">
-            <button id="theme-toggle" onclick="toggleTheme()">
-                <i class="fas fa-moon"></i>
-                <span>Dark Mode</span>
-            </button>
-            <button id="logout-button" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </button>
-        </div>
+                <li class="active">
+                    <a href="dashboard.html">
+                        <i class="fa-solid fa-solar-panel"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="fuelstatus.html">
+                        <i class="fa-solid fa-gas-pump"></i>
+                        <span>Fuel Status</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="batterystatus.html">
+                        <i class="fa-solid fa-car-battery"></i>
+                        <span>Battery Status</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="livetraking.html">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        </svg>
+                        <span>Live Tracking</span>
+                    </a>
+                </li>
+
+
+                <li>
+                    <a href="tripmange.html">
+                        <i class="fa-solid fa-compass"></i>
+                        <span>Trip Manage</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="vehicalhelth.html">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        <span>Vehical Helth</span>
+                    </a>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(this)">
+                        <i class="fa-solid fa-flask-vial"></i>
+                        <span>Reports</span>
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li><a href="tripreport.html"> Trip Report</a></li>
+                        <li><a href="fuelreport.html"> Fuel Report</a></li>
+                        <li><a href="batteryreport.html"> Battery Report</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="reminders.html">
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Reminders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="history.html">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html">
+                        <i class="fa-solid fa-user-large"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="divider"></div>
+
+            <div class="sidebar-footer">
+                <button id="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                </button>
+                <button id="logout-button" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
     </div>
     </nav>
 
     <!-- ======================================================================================================================-->
     <main>
-   <!--   <header class="main-header">
+        <!--   <header class="main-header">
             <div class="header-left">
                 <h1>Dashboard</h1>
                 <p class="breadcrumb">Home / Dashboard</p>
@@ -168,11 +168,12 @@
             <h1><span class="highlight">Drive</span>Link</h1>
             <p>Dashboard</p>
         </div>
-        
+
         <div class="main-container">
-            <div class="box">
-                <div class="container1">
-                    <h2>Fuel Monitor</h2><br>
+            <div class="dashboard-widgets">
+
+                <!-- <div class="container1"> -->
+                <!--  <h2>Fuel Monitor</h2><br>
 
                     <div class="fuel-container">
                         <div class="water" id="waterLevel">
@@ -186,27 +187,94 @@
                     <p>Fule Level (L) &nbsp;&nbsp;: </p>
 
 
+                </div> -->
+                <div class="widget fuel-widget">
+                    <div class="widget-header">
+                        <h2>Fuel Monitor</h2>
+                        <div class="widget-actions">
+                            <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                            <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <div class="fuel-container">
+                            <div class="water" id="waterLevel">
+                                <div class="wave"></div>
+                                <div class="wave"></div>
+                            </div>
+                            <span class="fuel-text" id="fuelText">65%</span>
+                        </div>
+                        <div class="fuel-details">
+                            <div class="detail-item">
+                                <span class="label">Fuel Level:</span>
+                                <span class="value">32.5 L</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Range:</span>
+                                <span class="value">~420 km</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Consumption:</span>
+                                <span class="value">7.8 L/100km</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="box">
-                <div class="battery">
-                    <h2 style="color: #eeeeee;">Battery</h2><br>
-
-                    <div class="battery-head"></div>
-                    <div class="battery-body">
-                        <i class="fas fa-bolt"></i>
-                        <div class="charge"></div>
+                <div class="widget battery-widget">
+                    <div class="widget-header">
+                        <h2>Battery Status</h2>
+                        <div class="widget-actions">
+                            <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                            <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
                     </div>
-                    <p id="battery-percentage">Battery: 0%</p>
-                   
+                    <div class="widget-content">
+                        <div class="battery-display">
+                            <div class="battery-head"></div>
+                            <div class="battery-body">
+                                <i class="fas fa-bolt"></i>
+                                <div class="charge"></div>
+                            </div>
+                        </div>
+                        <p id="battery-percentage">Battery: 78%</p>
+                        <div class="battery-details">
+                            <div class="detail-item">
+                                <span class="label">Voltage:</span>
+                                <span class="value">12.7 V</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Health:</span>
+                                <span class="value">Good</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Last Check:</span>
+                                <span class="value">Today, 10:45 AM</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- <div class="battery">
+                        <h2 style="color: #eeeeee;">Battery</h2><br>
+
+                        <div class="battery-head"></div>
+                        <div class="battery-body">
+                            <i class="fas fa-bolt"></i>
+                            <div class="charge"></div>
+                        </div>
+                        <p id="battery-percentage">Battery: 0%</p>
+
+                    </div> -->
             </div>
         </div>
+        </div>
         <!-- Blur Overlay -->
-    <div id="blurOverlay" class="blur-overlay"></div>
-    <div id="toast" class="toast">
-        <span id="toastMessage">DriveLink</span>
-    </div>
+        <div id="blurOverlay" class="blur-overlay"></div>
+        <div id="toast" class="toast">
+            <span id="toastMessage">DriveLink</span>
+        </div>
 
         <div class="container">
             <div class="dashboard-container">
@@ -224,18 +292,18 @@
                         localStorage.clear();
                         alert("LocalStorage cleared!");
                     }
-                     // Toggle sidebar
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('expanded');
-            const toggleBtn = document.getElementById('toggle-btn');
-            
-            if (sidebar.classList.contains('expanded')) {
-                toggleBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            } else {
-                toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-            }
-        }
+                    // Toggle sidebar
+                    function toggleSidebar() {
+                        const sidebar = document.getElementById('sidebar');
+                        sidebar.classList.toggle('expanded');
+                        const toggleBtn = document.getElementById('toggle-btn');
+
+                        if (sidebar.classList.contains('expanded')) {
+                            toggleBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                        } else {
+                            toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                        }
+                    }
                 </script>
             </div>
         </div>
