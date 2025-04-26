@@ -3,17 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" type="x-icon" href="icon.png">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard</title>
-
-    <link rel="stylesheet" href="css/dashboardstyle.css">
-    <link rel="stylesheet" href="css/sidebar.css">
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+    <link rel="shortcut icon" type="x-icon" href="icon.png">
+    <link rel="stylesheet" href="css/dashboardstyle.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <script src="../app.js"></script>
     <script src="js/sidebar.js"></script>
     <script src="dashboard.js"></script>
@@ -176,40 +177,7 @@
         </div> -->
         
         <div class="dashboard-content">
-            <!-- Notification Center Widget -->
-            <div class="notification-center">
-                <div class="widget-header">
-                    <h2><i class="fas fa-bell"></i> Notifications</h2>
-                    <div class="widget-actions">
-                        <button class="refresh-btn" id="refresh-notifications"><i class="fas fa-sync-alt"></i></button>
-                    </div>
-                </div>
-                <div class="widget-content notifications-container" id="notifications-list">
-                    <!-- Notifications will be injected here by JavaScript -->
-                    <div class="notification-item unread">
-                        <div class="notification-icon warning">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="notification-content">
-                            <h4>Low Fuel Warning</h4>
-                            <p>Fuel level below 15%. Please refill soon.</p>
-                            <span class="notification-time">10 min ago</span>
-                        </div>
-                        <button class="notification-dismiss"><i class="fas fa-times"></i></button>
-                    </div>
-                    <div class="notification-item">
-                        <div class="notification-icon info">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="notification-content">
-                            <h4>Scheduled Maintenance</h4>
-                            <p>Oil change due in 3 days.</p>
-                            <span class="notification-time">2 hours ago</span>
-                        </div>
-                        <button class="notification-dismiss"><i class="fas fa-times"></i></button>
-                    </div>
-                </div>
-            </div>
+           
         
             <!-- Vehicle Selector Dropdown -->
             <div class="vehicle-selector">
@@ -265,25 +233,7 @@
                             <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         </div>
                     </div>
-                    <div class="widget-content">
-                        
-                            <div class="box">
-                                
-                                   
-                                    <div class="fuel-container">
-                                        <div class="water" id="waterLevel">
-                                            <div class="wave"></div>
-                                            <div class="wave"></div>
-                                        </div>
-                                        <span class="fuel-text" id="fuelText">10%</span>
-                                    </div>
-                
-                
-                                    <p>Fule Level (L) &nbsp;&nbsp;: </p>
-                
-                
-                                </div>
-                            </div>
+                   
                         <div class="fuel-tank-container">
                             <div class="fuel-tank">
                                 <div class="fuel-level" id="fuel-level" style="height: 65%;">
@@ -440,8 +390,42 @@
                 
             </div>
         </div>
+         <!-- Notification Center Widget -->
+         <div class="notification-center">
+            <div class="widget-header">
+                <h2><i class="fas fa-bell"></i> Notifications</h2>
+                <div class="widget-actions">
+                    <button class="refresh-btn" id="refresh-notifications"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div class="widget-content notifications-container" id="notifications-list">
+                <!-- Notifications will be injected here by JavaScript -->
+                <div class="notification-item unread">
+                    <div class="notification-icon warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Low Fuel Warning</h4>
+                        <p>Fuel level below 15%. Please refill soon.</p>
+                        <span class="notification-time">10 min ago</span>
+                    </div>
+                    <button class="notification-dismiss"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-icon info">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Scheduled Maintenance</h4>
+                        <p>Oil change due in 3 days.</p>
+                        <span class="notification-time">2 hours ago</span>
+                    </div>
+                    <button class="notification-dismiss"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+        </div>
         
-        <div class="main-container">
+       <!--  <div class="main-container">
             <div class="box">
                 <div class="container1">
                     <h2>Fuel Monitor</h2><br>
@@ -478,7 +462,7 @@
     <div id="blurOverlay" class="blur-overlay"></div>
     <div id="toast" class="toast">
         <span id="toastMessage">DriveLink</span>
-    </div>
+    </div> -->
 
       <!--   <div class="container">
             <div class="dashboard-container">
