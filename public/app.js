@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (loginButton) {
         loginButton.addEventListener('click', loginUser);
-    } 
+    }
     if (googleLoginButton) {
         googleLoginButton.addEventListener('click', googleLogin);
     }
@@ -39,7 +39,7 @@ const firebaseConfig = {
     storageBucket: "espclientsnew.firebasestorage.app",
     messagingSenderId: "196283041268",
     appId: "1:196283041268:web:6f24e1202238bf01fea5a1"
-  };
+};
 
 // Initialize Firebase
 if (!firebase.apps.length) {
@@ -72,7 +72,7 @@ function register(event) {
     }
 
     if (password !== confirmPassword) {
-        
+
         showToast("Passwords do not match!");
         return;
     }
@@ -158,10 +158,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const deviceId = userData.deviceId;
                     const username = userData.username;
                     const vehicleType = userData.vehicleType; // Get vehicleType
-                    
-                    localStorage.setItem("deviceId",deviceId);
+
+                    localStorage.setItem("deviceId", deviceId);
                     localStorage.setItem("username", username);
-                   console.log(username);
+                    console.log(username);
                     // Update UI
                     document.getElementById("device-id").innerText = deviceId;
                     document.getElementById("usernametag").innerText = `Hi, ${username} !`;
@@ -174,12 +174,16 @@ document.addEventListener("DOMContentLoaded", async function () {
                         const vehicleData = vehicleSnap.data();
                         min_value = vehicleData.minLevel;
                         max_value = vehicleData.maxLevel;
+                        tank_liter = vehicleData.tankvolum;
+
                         localStorage.setItem("min_value", min_value);
                         localStorage.setItem("max_value", max_value);
-                      
+                        localStorage.setItem("tank_value", tank_liter);
+
 
                         document.getElementById("min-id").innerText = min_value;
                         document.getElementById("max-id").innerText = max_value;
+                        document.getElementById("tank_capasity").innerText = tank_liter;
                     } else {
                         console.log("No vehicle data found.");
                     }
@@ -187,7 +191,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     // Call additional functions
                     loadSensorData(deviceId);
                 } catch (error) {
-                   
+
                 }
             } else {
                 // Redirect if user is not logged in
@@ -246,13 +250,13 @@ function loadSensorData(deviceId) {
     sensorRef.on("value", (snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-           
+
             document.getElementById("led-status").innerText = `LED Status: ${data.led_status.value}`;
 
             // Declare current_level correctly
             let current_level = data.fuel_sensor.value;
             let lati = data.tracking.longitude;
-            localStorage.setItem("latitude",lati) ;
+            localStorage.setItem("latitude", lati);
 
             let battery_level = data.battery.value;
 
@@ -262,10 +266,10 @@ function loadSensorData(deviceId) {
 
             setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 10);
             setTimeout(() => updateBattery(battery_level), 500);
-            
+
 
         } else {
-            
+
             document.getElementById("led-status").innerText = "LED Status: --";
         }
     });
