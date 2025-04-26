@@ -257,7 +257,7 @@ function loadSensorData(deviceId) {
             let battery_level = data.battery.value;
 
             localStorage.setItem("fuel_level", current_level);
-            localStorage.setItem("battery_level", battery_level);
+            localStorage.setItem("battery_level", battery-voltage);
             console.log(localStorage);
 
             setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 10);
