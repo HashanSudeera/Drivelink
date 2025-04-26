@@ -141,20 +141,40 @@
 
     <!-- ======================================================================================================================-->
     <main>
-        <div class="header-left">
-            <h1>DriveLink</h1>
-            <p class="breadcrumb">Dashboard</p>
-        </div>
         <header class="main-header">
-
-
-            <div class="header-actions">
-
-
+            <div class="header-left">
+                <h1>Dashboard</h1>
+                
             </div>
+            <div class="header-right">
+               
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <div class="user-menu">
+                        <img src="avatar.png" alt="User" id="headerUserAvatar">
+                        <div class="user-dropdown">
+                            <a href="profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
+                            <a href="#" id="user-id-change"><i class="fas fa-edit"></i> Change User ID</a>
+                            <a href="#" id="settings-link"><i class="fas fa-cog"></i> Settings</a>
+                          
+                            <a href="#" id="header-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </header>
-
+        </header> 
+         <!-- Vehicle Selector Dropdown -->
+         <div class="vehicle-selector">
+            <label for="vehicle-dropdown">Select Vehicle:</label>
+            <select id="vehicle-dropdown" class="custom-select">
+                <option value="vehicle1">Vehicle 1 (DL-2304982)</option>
+                <option value="vehicle2">Vehicle 2 (DL-1897345)</option>
+                <option value="add-new">+ Add New Vehicle</option>
+            </select>
+        </div>
         <div class="dashboard-content">
 
 
@@ -225,6 +245,7 @@
                         </div>
                     </div>
                 </div>
+                
 
                 <div class="widget status-widget">
                     <div class="widget-header">
@@ -277,6 +298,38 @@
 
                 </div>
 
+            </div>
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Device ID</h3>
+                        <p id="device-id">DL-2304982</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                </div>
+        
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Temperature</h3>
+                        <p class="status-value" id="engine-temp">92°C</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Status</h3>
+                        <p class="status-value" id="vehicle-status"><span class="status-online">Online</span></p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-signal"></i>
+                    </div>
+                </div>
             </div>
             <div class="stats-row">
                 <div class="stat-card">
@@ -339,6 +392,41 @@
                 
             </div>
         </div> -->
+        <div class="dashboard-content">
+            <!-- Notification Center Widget -->
+            <div class="notification-center">
+                <div class="widget-header">
+                    <h2><i class="fas fa-bell"></i> Notifications</h2>
+                    <div class="widget-actions">
+                        <button class="refresh-btn" id="refresh-notifications"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+                <div class="widget-content notifications-container" id="notifications-list">
+                    <!-- Notifications will be injected here by JavaScript -->
+                    <div class="notification-item unread">
+                        <div class="notification-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Low Fuel Warning</h4>
+                            <p>Fuel level below 15%. Please refill soon.</p>
+                            <span class="notification-time">10 min ago</span>
+                        </div>
+                        <button class="notification-dismiss"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon info">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Scheduled Maintenance</h4>
+                            <p>Oil change due in 3 days.</p>
+                            <span class="notification-time">2 hours ago</span>
+                        </div>
+                        <button class="notification-dismiss"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            </div>
         <script>
             function clearStorage() {
                 localStorage.clear();
@@ -493,4 +581,4 @@
 
 </body>
 
-</html>
+</html>s
