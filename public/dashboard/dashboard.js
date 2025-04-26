@@ -63,7 +63,7 @@ function initializeFirebaseAndAuth() {
                 }
             } catch (error) {
                 console.error("Error initializing dashboard:", error);
-                showToast("Error loading dashboard data.");
+                /* showToast("Error loading dashboard data."); */
             }
         } else {
             // Redirect if user is not logged in
