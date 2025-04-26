@@ -74,7 +74,7 @@ function populateUserProfile(userData, user) {
     document.getElementById("vehicleFuel").textContent = userData.fuelType || "Not provided";
     
     // Form inputs for vehicle
-    document.getElementById("modelInput").value = userData.vehicleType || "";
+   
     document.getElementById("yearInput").value = userData.vehicleYear || "";
     document.getElementById("plateInput").value = userData.vehiclePlate || "";
     
@@ -1453,4 +1453,241 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Load User Devices
     loadUserDevices();
+});
+
+// Profile.js - Add this code to the existing profile.js file
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load user's devices into device selector
+    loadUserDevicesForSelector();
+    
+    // Add event listener for "Add New Device" button
+    const addDeviceBtn = document.createElement('button');
+    addDeviceBtn.className = 'add-device-btn';
+    addDeviceBtn.innerHTML = '<i class="fas fa-plus"></i> Add New Device';
+    addDeviceBtn.addEventListener('click', function() {
+        window.location.href = 'device-management.html';
+    });
+    
+    // Add button after device selector
+    const deviceSelectorContainer = document.querySelector('.device-selector-container');
+    if (deviceSelectorContainer) {
+        deviceSelectorContainer.appendChild(addDeviceBtn);
+    }
+    
+    // Add event listener to device selector
+    const deviceSelector = document.getElementById('deviceSelector');
+    if (deviceSelector) {
+        deviceSelector.addEventListener('change', function() {
+            const selectedDeviceId = this.value;
+            if (selectedDeviceId) {
+                switchActiveDevice(selectedDeviceId);
+            }
+        });
+    }
+});
+
+// Load user devices into selector dropdown
+function loadUserDevicesForSelector() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    const deviceSelector = document.getElementById('deviceSelector');
+    if (!deviceSelector) return;
+    
+    const db = firebase.firestore();
+    db.collection('users').doc(user.uid).collection('devices').get()
+        .then((querySnapshot) => {
+            // Clear existing options except the first one
+            while (deviceSelector.options.length > 1) {
+                deviceSelector.remove(1);
+            }
+            
+            if (querySnapshot.empty) {
+                // No devices
+                const option = document.createElement('option');
+                option.textContent = "No devices available";
+                option.disabled = true;
+                deviceSelector.appendChild(option);
+                return;
+            }
+            
+            // Get current device ID from localStorage
+            const currentDeviceId = localStorage.getItem('deviceId');
+            
+            // Add devices to dropdown
+            querySnapshot.forEach((doc) => {
+                const device = doc.data();
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.textContent = `${device.deviceName || device.deviceId} (${device.vehicleType || 'Unknown'})`;
+                
+                if (device.deviceId === currentDeviceId) {
+                    option.selected = true;
+                }
+                
+                deviceSelector.appendChild(option);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading devices for selector:", error);
+        });
+}
+
+// Switch active device
+function switchActiveDevice(deviceId) {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    const db = firebase.firestore();
+    
+    // Update user's active device in Firestore
+    db.collection('users').doc(user.uid).update({
+        deviceId: deviceId
+    })
+    .then(() => {
+        // Update localStorage
+        localStorage.setItem('deviceId', deviceId);
+        
+        // Show toast and reload page
+        showToast("Device switched successfully!");
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    })
+    .catch((error) => {
+        console.error("Error switching device:", error);
+        showToast("Failed to switch device");
+    });
+}
+
+// Update the user profile info loading function to display device information
+function loadUserProfileInfo() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    const db = firebase.firestore();
+    
+    // Get user data including current device ID
+    db.collection('users').doc(user.uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                
+                // Update profile info with user data
+                document.getElementById('profileName').textContent = userData.username || 'User';
+                document.getElementById('profileEmail').textContent = user.email;
+                document.getElementById('userFullName').textContent = userData.username || 'Not provided';
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('currentDeviceId').textContent = userData.deviceId || 'Not set';
+                
+                // Set registration date
+                const registrationDate = userData.timestamp ? new Date(userData.timestamp.toDate()) : new Date();
+                document.getElementById('memberSince').textContent = registrationDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Load vehicle information for the current device
+                if (userData.deviceId) {
+                    loadVehicleInfo(userData.deviceId);
+                } else {
+                    document.getElementById('no-vehicle-message').style.display = 'block';
+                    document.getElementById('vehicle-details').style.display = 'none';
+                }
+            }
+        })
+        .catch((error) => {
+            console.error("Error loading user profile:", error);
+        });
+}
+
+// Load vehicle information for the current device
+function loadVehicleInfo(deviceId) {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    const db = firebase.firestore();
+    
+    // First get device details from user's devices collection
+    db.collection('users').doc(user.uid).collection('devices').doc(deviceId).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const deviceData = doc.data();
+                
+                // Now get vehicle type details from vehicle collection
+                return db.collection('vehicle').doc(deviceData.vehicleType).get()
+                    .then((vehicleDoc) => {
+                        if (vehicleDoc.exists) {
+                            const vehicleData = vehicleDoc.data();
+                            
+                            // Update vehicle details in profile
+                            document.getElementById('vehicleModel').textContent = vehicleData.model || deviceData.vehicleType;
+                            document.getElementById('vehicleYear').textContent = vehicleData.year || 'N/A';
+                            document.getElementById('vehiclePlate').textContent = deviceData.licensePlate || 'Not provided';
+                            document.getElementById('vehicleFuel').textContent = vehicleData.fuelType || 'Not specified';
+                            document.getElementById('vehicleMileage').textContent = deviceData.mileage || 'Not provided';
+                            
+                            document.getElementById('no-vehicle-message').style.display = 'none';
+                            document.getElementById('vehicle-details').style.display = 'block';
+                        } else {
+                            // Vehicle type not found
+                            document.getElementById('vehicleModel').textContent = deviceData.vehicleType;
+                            document.getElementById('vehicleMileage').textContent = deviceData.mileage || 'Not provided';
+                            
+                            document.getElementById('no-vehicle-message').style.display = 'none';
+                            document.getElementById('vehicle-details').style.display = 'block';
+                        }
+                    });
+            } else {
+                // Device not found
+                document.getElementById('no-vehicle-message').style.display = 'block';
+                document.getElementById('vehicle-details').style.display = 'none';
+            }
+        })
+        .catch((error) => {
+            console.error("Error loading vehicle info:", error);
+        });
+}
+
+// Add CSS styles for the device selector and add button
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .device-selector-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .device-selector {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 14px;
+            min-width: 200px;
+        }
+        
+        .add-device-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .add-device-btn:hover {
+            background-color: var(--primary-dark);
+        }
+    `;
+    document.head.appendChild(style);
 });
