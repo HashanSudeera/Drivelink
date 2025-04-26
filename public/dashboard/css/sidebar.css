@@ -746,11 +746,15 @@ body.light-mode .user-dropdown a:hover {
     min-width: 20px;
     text-align: center;
 }
+
+
+
+
 /* Dashboard Content */
 .dashboard-content {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 10px;
 }
 
 .stats-row {
@@ -823,7 +827,7 @@ body.light-mode .stat-info p {
 
 .widget {
     background-color: var(--dark-content);
-    border-radius: 8px;
+    border-radius: 5px;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
 }
