@@ -7,16 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard</title>
 
-  
+    <link rel="stylesheet" href="css/dashboardstyle.css">
+    <link rel="stylesheet" href="css/sidebar.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
-    <link rel="stylesheet" href="css/dashboardstyle.css">
-    <link rel="stylesheet" href="css/sidebar.css">
+
     <script src="../app.js"></script>
-    
+    <script src="js/sidebar.js"></script>
     <script src="dashboard.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
@@ -50,10 +49,7 @@
         <ul class="sidebar-menu">
           
             <li>
-                <div class="header-left">
-                    <h1>Dashboard</h1>
-                    <span id="usernametag">Hi, User!</span>
-                </div>
+               
                 <p class="username-text" id="usernametag">Hi, -- !</p>
                 <div class="divider"></div>
            
@@ -167,7 +163,7 @@
                             <a href="profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
                             <a href="#" id="user-id-change"><i class="fas fa-edit"></i> Change User ID</a>
                             <a href="#" id="settings-link"><i class="fas fa-cog"></i> Settings</a>
-                            
+                          
                             <a href="#" id="header-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>
                     </div>
@@ -179,52 +175,52 @@
             <p id ="tabname" style="margin-top: 10px;margin-bottom: 10px; color: #e6e0e0;margin-left: 1px;">Dashboard</p>
         </div> -->
         
-       
-        <br>
+        <div class="dashboard-content">
+            <!-- Notification Center Widget -->
+            <div class="notification-center">
+                <div class="widget-header">
+                    <h2><i class="fas fa-bell"></i> Notifications</h2>
+                    <div class="widget-actions">
+                        <button class="refresh-btn" id="refresh-notifications"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+                <div class="widget-content notifications-container" id="notifications-list">
+                    <!-- Notifications will be injected here by JavaScript -->
+                    <div class="notification-item unread">
+                        <div class="notification-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Low Fuel Warning</h4>
+                            <p>Fuel level below 15%. Please refill soon.</p>
+                            <span class="notification-time">10 min ago</span>
+                        </div>
+                        <button class="notification-dismiss"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon info">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Scheduled Maintenance</h4>
+                            <p>Oil change due in 3 days.</p>
+                            <span class="notification-time">2 hours ago</span>
+                        </div>
+                        <button class="notification-dismiss"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            </div>
+        
             <!-- Vehicle Selector Dropdown -->
             <div class="vehicle-selector">
                 <label for="vehicle-dropdown">Select Vehicle:</label>
                 <select id="vehicle-dropdown" class="custom-select">
-                    <option value="vehicle1">Vehicle 1 </option>
-                    <option value="vehicle2">Vehicle 2 </option>
+                    <option value="vehicle1">Vehicle 1 (DL-2304982)</option>
+                    <option value="vehicle2">Vehicle 2 (DL-1897345)</option>
                     <option value="add-new">+ Add New Vehicle</option>
                 </select>
             </div>
-            <div class="dashboard-content">
-                <!-- Notification Center Widget -->
-                <div class="notification-center">
-                    <div class="widget-header">
-                        <h2><i class="fas fa-bell"></i> Notifications</h2>
-                        <div class="widget-actions">
-                            <button class="refresh-btn" id="refresh-notifications"><i class="fas fa-sync-alt"></i></button>
-                        </div>
-                    </div>
-                    <div class="widget-content notifications-container" id="notifications-list">
-                        <!-- Notifications will be injected here by JavaScript -->
-                        <div class="notification-item unread">
-                            <div class="notification-icon warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="notification-content">
-                                <h4>Low Fuel Warning</h4>
-                                <p>Fuel level below 15%. Please refill soon.</p>
-                                <span class="notification-time">10 min ago</span>
-                            </div>
-                            <button class="notification-dismiss"><i class="fas fa-times"></i></button>
-                        </div>
-                        <div class="notification-item">
-                            <div class="notification-icon info">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="notification-content">
-                                <h4>Scheduled Maintenance</h4>
-                                <p>Oil change due in 3 days.</p>
-                                <span class="notification-time">2 hours ago</span>
-                            </div>
-                            <button class="notification-dismiss"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
+        
             <!-- Stats Row -->
             <div class="stats-row">
                 <div class="stat-card">
@@ -255,90 +251,132 @@
                     <div class="stat-icon">
                         <i class="fas fa-signal"></i>
                     </div>
-                    
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Max Level</h3>
-                        <p id="max-id">85%</p>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-arrow-up"></i>
-                    </div>
                 </div>
             </div>
             
             <!-- Main Dashboard Widgets -->
-            <<div class="dashboard-widgets">
+            <div class="dashboard-widgets">
+                <!-- Enhanced Fuel Widget -->
                 <div class="widget fuel-widget">
                     <div class="widget-header">
-                        <h2>Fuel Monitor</h2>
+                        <h2><i class="fas fa-gas-pump"></i> Fuel Monitor</h2>
                         <div class="widget-actions">
-                            <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                            <button class="refresh-btn" id="refresh-fuel"><i class="fas fa-sync-alt"></i></button>
                             <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         </div>
                     </div>
                     <div class="widget-content">
-                        <div class="fuel-container">
-                            <div class="water" id="waterLevel">
-                                <div class="wave"></div>
-                                <div class="wave"></div>
+                        <div class="fuel-tank-container">
+                            <div class="fuel-tank">
+                                <div class="fuel-level" id="fuel-level" style="height: 65%;">
+                                    <div class="fuel-wave"></div>
+                                </div>
+                                <div class="fuel-cap"></div>
+                                <div class="fuel-markers">
+                                    <span class="marker" style="bottom: 0%;">E</span>
+                                    <span class="marker" style="bottom: 25%;">1/4</span>
+                                    <span class="marker" style="bottom: 50%;">1/2</span>
+                                    <span class="marker" style="bottom: 75%;">3/4</span>
+                                    <span class="marker" style="bottom: 100%;">F</span>
+                                </div>
                             </div>
-                            <span class="fuel-text" id="fuelText">65%</span>
+                            <span class="fuel-percentage" id="fuelText">65%</span>
                         </div>
                         <div class="fuel-details">
                             <div class="detail-item">
                                 <span class="label">Fuel Level:</span>
-                                <span class="value">32.5 L</span>
+                                <span class="value" id="fuel-liters">32.5 L</span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Range:</span>
-                                <span class="value">~420 km</span>
+                                <span class="value" id="fuel-range">~420 km</span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Consumption:</span>
-                                <span class="value">7.8 L/100km</span>
+                                <span class="value" id="fuel-consumption">7.8 L/100km</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Enhanced Battery Widget -->
                 <div class="widget battery-widget">
                     <div class="widget-header">
-                        <h2>Battery Status</h2>
+                        <h2><i class="fas fa-car-battery"></i> Battery Status</h2>
                         <div class="widget-actions">
-                            <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                            <button class="refresh-btn" id="refresh-battery"><i class="fas fa-sync-alt"></i></button>
                             <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         </div>
                     </div>
                     <div class="widget-content">
                         <div class="battery-display">
-                            <div class="battery-head"></div>
-                            <div class="battery-body">
-                                <i class="fas fa-bolt"></i>
-                                <div class="charge"></div>
+                            <div class="battery-container">
+                                <div class="battery-head"></div>
+                                <div class="battery-body">
+                                    <div class="battery-charge" id="battery-charge" style="height: 78%;">
+                                        <div class="battery-bubbles">
+                                            <div class="bubble"></div>
+                                            <div class="bubble"></div>
+                                            <div class="bubble"></div>
+                                        </div>
+                                    </div>
+                                    <div class="battery-markers">
+                                        <span class="marker" style="bottom: 20%;">20%</span>
+                                        <span class="marker" style="bottom: 50%;">50%</span>
+                                        <span class="marker" style="bottom: 80%;">80%</span>
+                                    </div>
+                                </div>
+                                <div class="battery-status">
+                                    <i class="fas fa-bolt"></i>
+                                    <span id="battery-percentage">78%</span>
+                                </div>
                             </div>
                         </div>
-                        <p id="battery-percentage">Battery: 78%</p>
                         <div class="battery-details">
                             <div class="detail-item">
                                 <span class="label">Voltage:</span>
-                                <span class="value">12.7 V</span>
+                                <span class="value" id="battery-voltage">12.7 V</span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Health:</span>
-                                <span class="value">Good</span>
+                                <span class="value" id="battery-health">Good</span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Last Check:</span>
-                                <span class="value">Today, 10:45 AM</span>
+                                <span class="value" id="battery-last-check">Today, 10:45 AM</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                
+                <!-- RPM Gauge Widget -->
+                <div class="widget rpm-widget">
+                    <div class="widget-header">
+                        <h2><i class="fas fa-tachometer-alt"></i> Engine RPM</h2>
+                        <div class="widget-actions">
+                            <button class="refresh-btn" id="refresh-rpm"><i class="fas fa-sync-alt"></i></button>
+                            <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <div class="gauge-container">
+                            <div class="gauge" id="rpm-gauge">
+                                <div class="gauge-body">
+                                    <div class="gauge-fill" id="rpm-gauge-fill"></div>
+                                    <div class="gauge-cover"></div>
+                                    <div class="gauge-markers">
+                                        <span class="marker" style="transform: rotate(-90deg) translateY(-80px);">0</span>
+                                        <span class="marker" style="transform: rotate(-45deg) translateY(-80px);">2</span>
+                                        <span class="marker" style="transform: rotate(0deg) translateY(-80px);">4</span>
+                                        <span class="marker" style="transform: rotate(45deg) translateY(-80px);">6</span>
+                                        <span class="marker" style="transform: rotate(90deg) translateY(-80px);">8</span>
+                                    </div>
+                                </div>
+                                <div class="gauge-value" id="rpm-value">3250 RPM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Vehicle Controls Widget -->
                 <div class="widget controls-widget">
@@ -367,8 +405,20 @@
                                 </label>
                                 <div class="control-status" id="relay2-status">OFF</div>
                             </div>
-                           
-                           
+                            <div class="control-item">
+                                <div class="control-label">Headlights</div>
+                                <label class="switch">
+                                    <input type="checkbox" id="lights-switch">
+                                    <span class="slider round"></span>
+                                </label>
+                                <div class="control-status" id="lights-status">OFF</div>
+                            </div>
+                            <div class="control-item">
+                                <div class="control-label">Horn</div>
+                                <button class="horn-button" id="horn-button">
+                                    <i class="fas fa-bullhorn"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -402,8 +452,24 @@
                                     <p class="status-value success" id="oil-status">Normal</p>
                                 </div>
                             </div>
-                         
-                               
+                            <div class="status-item">
+                                <div class="status-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div class="status-info">
+                                    <h4>Lights</h4>
+                                    <p id="led-status" class="status-value">ON</p>
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-icon">
+                                    <i class="fas fa-door-open"></i>
+                                </div>
+                                <div class="status-info">
+                                    <h4>Door Status</h4>
+                                    <p id="door-status" class="status-value warning">Rear Left Open</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -412,7 +478,7 @@
             </div>
         </div>
         
-        <div class="main-container">
+       <!--  <div class="main-container">
             <div class="box">
                 <div class="container1">
                     <h2>Fuel Monitor</h2><br>
@@ -444,7 +510,7 @@
                    
                 </div>
             </div>
-        </div> 
+        </div> -->
         <!-- Blur Overlay -->
     <div id="blurOverlay" class="blur-overlay"></div>
     <div id="toast" class="toast">
