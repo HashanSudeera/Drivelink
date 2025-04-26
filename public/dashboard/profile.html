@@ -152,6 +152,98 @@
         <div class="container">
             <h1>Profile</h1>
         </div>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body id="dashboardPage" class="dark-mode">
+    <!-- Include your sidebar from dashboard.html -->
+    
+    <main>
+        <header class="main-header">
+            <div class="header-left">
+                <h1>Profile Settings</h1>
+            </div>
+            <div class="header-right">
+                <!-- Include your header buttons from dashboard.html -->
+            </div>
+        </header>
+
+        <div class="profile-container">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        <img src="avatar.png" alt="User Avatar" id="userAvatar">
+                        <button class="change-avatar-btn"><i class="fas fa-camera"></i></button>
+                    </div>
+                    <h2 id="usernameDisplay">John Doe</h2>
+                    <p id="userEmail">john.doe@example.com</p>
+                </div>
+
+                <div class="profile-section">
+                    <h3><i class="fas fa-user-cog"></i> Account Settings</h3>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Enter new username">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Enter new email" disabled>
+                    </div>
+                    <button class="btn-save" id="saveProfileBtn">Save Changes</button>
+                </div>
+
+                <div class="profile-section">
+                    <h3><i class="fas fa-key"></i> Change Password</h3>
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" placeholder="Enter new password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                    </div>
+                    <button class="btn-save" id="changePasswordBtn">Change Password</button>
+                </div>
+
+                <div class="profile-section">
+                    <h3><i class="fas fa-car"></i> Vehicle Management</h3>
+                    <div class="form-group">
+                        <label for="deviceId">Device ID</label>
+                        <input type="text" id="deviceId" placeholder="Enter device ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="vehicleType">Vehicle Type</label>
+                        <select id="vehicleType">
+                            <option value="car">Car</option>
+                            <option value="truck">Truck</option>
+                            <option value="motorcycle">Motorcycle</option>
+                            <option value="van">Van</option>
+                        </select>
+                    </div>
+                    <button class="btn-add" id="addVehicleBtn"><i class="fas fa-plus"></i> Add New Vehicle</button>
+                    
+                    <div class="vehicle-list" id="vehicleList">
+                        <!-- Vehicles will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>
     </main>
 
 
