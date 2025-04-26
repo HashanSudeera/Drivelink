@@ -746,11 +746,15 @@ body.light-mode .user-dropdown a:hover {
     min-width: 20px;
     text-align: center;
 }
+
+
+
+
 /* Dashboard Content */
 .dashboard-content {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 10px;
 }
 
 .stats-row {
@@ -823,7 +827,7 @@ body.light-mode .stat-info p {
 
 .widget {
     background-color: var(--dark-content);
-    border-radius: 8px;
+    border-radius: 5px;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -898,267 +902,6 @@ body.light-mode .widget-actions button:hover {
     padding: 20px;
 }
 
-/* Fuel Widget */
-.fuel-widget .widget-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.fuel-container {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: var(--dark-sidebar);
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-body.light-mode .fuel-container {
-    background-color: var(--light-sidebar);
-}
-
-.water {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 65%;
-    background-color: var(--primary);
-    transition: height 1s ease-in-out;
-}
-
-.wave {
-    position: absolute;
-    top: -20px;
-    left: 0;
-    width: 200%;
-    height: 40px;
-    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 350 32" xmlns="http://www.w3.org/2000/svg"><path d="M0 0 Q43.75 32 87.5 0 T175 0 T262.5 0 T350 0 V32 H0" fill="rgb(54, 153, 255)"/></svg>') repeat-x;
-    animation: wave 3s linear infinite;
-}
-
-.wave:nth-child(2) {
-    top: -18px;
-    animation: wave 5s linear reverse infinite;
-    opacity: 0.6;
-}
-
-@keyframes wave {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-175px);
-    }
-}
-
-.fuel-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    font-weight: 700;
-    color: white;
-    z-index: 2;
-}
-
-.fuel-details {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.detail-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--dark-border);
-}
-
-body.light-mode .detail-item {
-    border-bottom: 1px dashed var(--light-border);
-}
-
-.detail-item:last-child {
-    border-bottom: none;
-}
-
-.label {
-    color: var(--dark-text-secondary);
-    font-size: 14px;
-}
-
-body.light-mode .label {
-    color: var(--light-text-secondary);
-}
-
-.value {
-    color: var(--dark-text);
-    font-weight: 500;
-}
-
-body.light-mode .value {
-    color: var(--light-text);
-}
-
-/* Battery Widget */
-.battery-widget .widget-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.battery-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.battery-head {
-    width: 12px;
-    height: 6px;
-    background-color: var(--dark-text);
-    border-radius: 3px 3px 0 0;
-}
-
-body.light-mode .battery-head {
-    background-color: var(--light-text);
-}
-
-.battery-body {
-    position: relative;
-    width: 60px;
-    height: 120px;
-    border: 3px solid var(--dark-text);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--dark-sidebar);
-    overflow: hidden;
-}
-
-body.light-mode .battery-body {
-    border-color: var(--light-text);
-    background-color: var(--light-sidebar);
-}
-
-.battery-body i {
-    font-size: 24px;
-    color: white;
-    z-index: 2;
-}
-
-.charge {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 78%;
-    background-color: var(--success);
-    transition: height 1s ease-in-out;
-}
-
-#battery-percentage {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--dark-text);
-}
-
-body.light-mode #battery-percentage {
-    color: var(--light-text);
-}
-
-.battery-details {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* Status Widget */
-.status-widget .widget-content {
-    padding: 10px;
-}
-
-.status-items {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-
-.status-item {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: var(--dark-sidebar);
-    transition: transform 0.2s;
-}
-
-body.light-mode .status-item {
-    background-color: var(--light-sidebar);
-}
-
-.status-item:hover {
-    transform: translateY(-3px);
-}
-
-.status-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background-color: rgba(54, 153, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    color: var(--primary);
-    margin-right: 12px;
-}
-
-.status-info h4 {
-    font-size: 14px;
-    color: var(--dark-text-secondary);
-    margin-bottom: 4px;
-}
-
-body.light-mode .status-info h4 {
-    color: var(--light-text-secondary);
-}
-
-.status-value {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--dark-text);
-}
-
-body.light-mode .status-value {
-    color: var(--light-text);
-}
-
-.status-value.active {
-    color: var(--primary);
-}
-
-.status-value.success {
-    color: var(--success);
-}
-
-.status-value.warning {
-    color: var(--warning);
-}
-
-.status-value.danger {
-    color: var(--danger);
-}
 
 /* Modal Styles */
 .modal {
@@ -1828,4 +1571,65 @@ body.light-mode .action-label {
     background-color: var(--light-content);
     color: var(--light-text);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+/* Device Selector Styling */
+.device-selector-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.device-selector {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.device-selector:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.primary-device-badge {
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+}
+
+.device-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.device-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.device-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.device-id {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.device-actions {
+    display: flex;
+    gap: 10px;
 }
