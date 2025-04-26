@@ -61,7 +61,7 @@
       
     </li>
    
-    <li class="active">
+    <li >
         <a href="dashboard.html">
             <i class="fa-solid fa-solar-panel"></i>
             <span>Dashboard</span>
@@ -126,7 +126,7 @@
             <span>History</span>
         </a>
     </li>
-    <li>
+    <li class="active">
         <a href="profile.html">
             <i class="fa-solid fa-user-large"></i>
             <span>Profile</span>
@@ -159,12 +159,19 @@
             <div class="header-left">
                 <h1>Profile</h1>
             </div>
+            <div class="device-selector-container">
+                <select id="deviceSelector" class="device-selector">
+                    <option value="">Select a device</option>
+                    <!-- Options will be populated via JavaScript -->
+                </select>
+            </div>
             <div class="header-right">
                 <div class="header-actions">
                     <button class="notification-btn">
                         <i class="fas fa-bell"></i>
                         <span class="badge">3</span>
                     </button>
+                    
                     <div class="user-menu">
                         <img src="avatar.png" alt="User" id="headerUserAvatar">
                         <div class="user-dropdown">
@@ -198,7 +205,7 @@
                     <p class="member-since">Member since: <span id="memberSince">January 2023</span></p>
                 </div>
             </div>
-
+    
             <div class="profile-sections">
                 <div class="profile-section">
                     <div class="section-header">
@@ -238,28 +245,95 @@
                         </div>
                     </div>
                 </div>
-
+    
                 <div class="profile-section">
                     <div class="section-header">
                         <h3><i class="fas fa-car"></i> Vehicle Information</h3>
                         <button class="edit-section-btn" data-section="vehicle"><i class="fas fa-edit"></i></button>
                     </div>
                     <div class="section-content" id="vehicle-info-section">
-                        <div class="info-row">
-                            <div class="info-label">Vehicle Model</div>
-                            <div class="info-value" id="vehicleModel">Toyota Camry</div>
+                        <div id="no-vehicle-message" style="display: none;">
+                            <p>No vehicle information available for this device ID.</p>
                         </div>
-                        <div class="info-row">
-                            <div class="info-label">Year</div>
-                            <div class="info-value" id="vehicleYear">2022</div>
+                        <div id="vehicle-details">
+                            <div class="info-row">
+                                <div class="info-label">Vehicle Model</div>
+                                <div class="info-value" id="vehicleModel">Toyota Camry</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Year</div>
+                                <div class="info-value" id="vehicleYear">2022</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">License Plate</div>
+                                <div class="info-value" id="vehiclePlate">ABC-1234</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Fuel Type</div>
+                                <div class="info-value" id="vehicleFuel">Gasoline</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Mileage (km)</div>
+                                <div class="info-value" id="vehicleMileage">5000</div>
+                            </div>
                         </div>
-                        <div class="info-row">
-                            <div class="info-label">License Plate</div>
-                            <div class="info-value" id="vehiclePlate">ABC-1234</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-label">Fuel Type</div>
-                            <div class="info-value" id="vehicleFuel">Gasoline</div>
+                    </div>
+                    <div class="add-vehicle-btn-container">
+                        <button class="secondary-btn" id="addVehicleBtn">
+                            <i class="fas fa-plus"></i> Register New Device
+                        </button>
+                    </div>
+                    <!-- Modal for adding a new vehicle/device -->
+                    <div id="addVehicleModal" class="modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3><i class="fas fa-car"></i> Register New Device</h3>
+                                <span class="close-modal" id="closeVehicleModal">&times;</span>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="newDeviceId">Device ID</label>
+                                    <input type="text" id="newDeviceId" placeholder="Enter Device ID" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newVehicleModel">Vehicle Model</label>
+                                    <select id="newVehicleModel">
+                                        <option value="dio">Dio</option>
+                                        <option value="ct100">CT100</option>
+                                        <option value="fz">FZ</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="otherModelContainer" style="display: none;">
+                                    <label for="otherModelInput">Specify Model</label>
+                                    <input type="text" id="otherModelInput">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newVehicleYear">Year</label>
+                                    <input type="number" id="newVehicleYear" placeholder="Year">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newVehiclePlate">License Plate</label>
+                                    <input type="text" id="newVehiclePlate" placeholder="License Plate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newVehicleFuel">Fuel Type</label>
+                                    <select id="newVehicleFuel">
+                                        <option value="gasoline">Gasoline</option>
+                                        <option value="diesel">Diesel</option>
+                                        <option value="electric">Electric</option>
+                                        <option value="hybrid">Hybrid</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newVehicleMileage">Mileage (km)</label>
+                                    <input type="number" id="newVehicleMileage" placeholder="Mileage in kilometers">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="cancel-btn" id="cancelAddVehicle">Cancel</button>
+                                <button class="save-btn" id="saveNewVehicle">Register Device</button>
+                            </div>
                         </div>
                     </div>
                     <div class="section-edit" id="vehicle-info-edit" style="display: none;">
@@ -284,13 +358,17 @@
                                 <option value="hybrid">Hybrid</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="mileageInput">Mileage (km)</label>
+                            <input type="number" id="mileageInput" value="5000">
+                        </div>
                         <div class="form-actions">
                             <button class="cancel-btn" data-section="vehicle">Cancel</button>
                             <button class="save-btn" data-section="vehicle">Save Changes</button>
                         </div>
                     </div>
                 </div>
-
+    
                 <div class="profile-section">
                     <div class="section-header">
                         <h3><i class="fas fa-cog"></i> Account Settings</h3>
@@ -306,8 +384,8 @@
                             <div class="info-value">••••••••</div>
                         </div>
                         <div class="info-row">
-                            <div class="info-label">Device ID</div>
-                            <div class="info-value" id="deviceId">DL-2304982</div>
+                            <div class="info-label">Current Device ID</div>
+                            <div class="info-value" id="currentDeviceId">DL-2304982</div>
                         </div>
                         <div class="info-row">
                             <div class="info-label">Notifications</div>
@@ -337,10 +415,6 @@
                             <input type="password" id="confirmPasswordInput" placeholder="Confirm new password">
                         </div>
                         <div class="form-group">
-                            <label for="deviceIdInput">Device ID</label>
-                            <input type="text" id="deviceIdInput" value="DL-2304982">
-                        </div>
-                        <div class="form-group">
                             <label class="checkbox-container">Enable notifications
                                 <input type="checkbox" id="notificationCheckbox" checked>
                                 <span class="checkmark"></span>
@@ -352,7 +426,7 @@
                         </div>
                     </div>
                 </div>
-
+    
                 <div class="profile-section">
                     <div class="section-header">
                         <h3><i class="fas fa-bell"></i> Notification Preferences</h3>
@@ -428,7 +502,7 @@
                     </div>
                 </div>
             </div>
-
+    
             <div class="danger-zone">
                 <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
                 <div class="danger-actions">
@@ -463,7 +537,30 @@
                 </div>
             </div>
         </div>
-
+    
+        <!-- Modal for changing device ID -->
+        <div id="changeDeviceModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-edit"></i> Change Device ID</h3>
+                    <span class="close-modal" id="closeDeviceModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Select the device ID you want to switch to:</p>
+                    <div class="form-group">
+                        <label for="deviceIdSelect">Device ID</label>
+                        <select id="deviceIdSelect">
+                            <!-- Will be populated via JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="cancel-btn" id="cancelChangeDevice">Cancel</button>
+                    <button class="save-btn" id="confirmChangeDevice">Switch Device</button>
+                </div>
+            </div>
+        </div>
+    
         <!-- Blur Overlay -->
         <div id="blurOverlay" class="blur-overlay"></div>
         <div id="toast" class="toast">

@@ -1829,3 +1829,64 @@ body.light-mode .action-label {
     color: var(--light-text);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+/* Device Selector Styling */
+.device-selector-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.device-selector {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.device-selector:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.primary-device-badge {
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+}
+
+.device-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.device-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.device-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.device-id {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.device-actions {
+    display: flex;
+    gap: 10px;
+}
