@@ -18,6 +18,12 @@
     <script src="js/sidebar.js"></script>
     <script src="dashboard.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        h1 {
+          margin-top: 5px;
+          margin-bottom: 5px;
+        }
+      </style>
 </head>
 
 <body id="dashboardPage" class="dark-mode">
@@ -139,10 +145,10 @@
 
     <!-- ======================================================================================================================-->
     <main>
-   <!--   <header class="main-header">
+     <header class="main-header">
             <div class="header-left">
                 <h1>Dashboard</h1>
-                <p class="breadcrumb">Home / Dashboard</p>
+                
             </div>
             <div class="header-right">
                
@@ -163,13 +169,175 @@
                     </div>
                 </div>
             </div>
-        </header>  -->
-        <div class="title-container">
-            <h1><span class="highlight">Drive</span>Link</h1>
-            <p>Dashboard</p>
-        </div>
+        </header> 
+        <!-- <div class="title-container">
+            <h1 class="tabname"><span style="color: #eeeeee;"margin: 0px;s">Drive</span>Link</h1>
+            <p id ="tabname" style="margin-top: 10px;margin-bottom: 10px; color: #e6e0e0;margin-left: 1px;">Dashboard</p>
+        </div> -->
         
-        <div class="main-container">
+            <div class="dashboard-content">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Device ID</h3>
+                            <p id="device-id">DL-2304982</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Min Level</h3>
+                            <p id="min-id">15%</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Max Level</h3>
+                            <p id="max-id">85%</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Distance</h3>
+                            <p id="ultrasonic-value">45 cm</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-ruler"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-widgets">
+                    <div class="widget fuel-widget">
+                        <div class="widget-header">
+                            <h2>Fuel Monitor</h2>
+                            <div class="widget-actions">
+                                <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                                <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="fuel-container">
+                                <div class="water" id="waterLevel">
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                </div>
+                                <span class="fuel-text" id="fuelText">65%</span>
+                            </div>
+                            <div class="fuel-details">
+                                <div class="detail-item">
+                                    <span class="label">Fuel Level:</span>
+                                    <span class="value">32.5 L</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Range:</span>
+                                    <span class="value">~420 km</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Consumption:</span>
+                                    <span class="value">7.8 L/100km</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget battery-widget">
+                        <div class="widget-header">
+                            <h2>Battery Status</h2>
+                            <div class="widget-actions">
+                                <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                                <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="battery-display">
+                                <div class="battery-head"></div>
+                                <div class="battery-body">
+                                    <i class="fas fa-bolt"></i>
+                                    <div class="charge"></div>
+                                </div>
+                            </div>
+                            <p id="battery-percentage">Battery: 78%</p>
+                            <div class="battery-details">
+                                <div class="detail-item">
+                                    <span class="label">Voltage:</span>
+                                    <span class="value">12.7 V</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Health:</span>
+                                    <span class="value">Good</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Last Check:</span>
+                                    <span class="value">Today, 10:45 AM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget status-widget">
+                        <div class="widget-header">
+                            <h2>Vehicle Status</h2>
+                            <div class="widget-actions">
+                                <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                                <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="status-items">
+                                <div class="status-item">
+                                    <div class="status-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    <div class="status-info">
+                                        <h4>Engine</h4>
+                                        <p class="status-value active">Running</p>
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-icon">
+                                        <i class="fas fa-thermometer-half"></i>
+                                    </div>
+                                    <div class="status-info">
+                                        <h4>Temperature</h4>
+                                        <p class="status-value">92°C</p>
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-icon">
+                                        <i class="fas fa-oil-can"></i>
+                                    </div>
+                                    <div class="status-info">
+                                        <h4>Oil Level</h4>
+                                        <p class="status-value success">Normal</p>
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-icon">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="status-info">
+                                        <h4>LED Status</h4>
+                                        <p id="led-status" class="status-value">ON</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+        
+       <!--  <div class="main-container">
             <div class="box">
                 <div class="container1">
                     <h2>Fuel Monitor</h2><br>
@@ -201,14 +369,14 @@
                    
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- Blur Overlay -->
     <div id="blurOverlay" class="blur-overlay"></div>
     <div id="toast" class="toast">
         <span id="toastMessage">DriveLink</span>
     </div>
 
-        <div class="container">
+      <!--   <div class="container">
             <div class="dashboard-container">
                 <h1>Welcome to the Dashboard Hass</h1>
                 <h2>Your Device ID: <span id="device-id"></span></h2>
@@ -218,12 +386,14 @@
                 <p id="led-status">LED Status: --</p>
                 <button type="button" id="logout-button" class="logout_but">Logout</button>
                 <button onclick="clearStorage()">Clear LocalStorage</button>
-
+            </div>
+        </div> -->
                 <script>
                     function clearStorage() {
                         localStorage.clear();
                         alert("LocalStorage cleared!");
                     }
+                    
                      // Toggle sidebar
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -237,8 +407,7 @@
             }
         }
                 </script>
-            </div>
-        </div>
+            
     </main>
 
 

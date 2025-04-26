@@ -27,6 +27,10 @@ body {
     display: grid;
     grid-template-columns: auto 1fr;
 }
+#tabname{
+    margin: 10px;
+    color: #7f8086;
+}
 
 #sidebar {
     box-sizing: border-box;
@@ -156,7 +160,7 @@ body {
 }
 
 main {
-    padding: min(30px, 7%);
+    padding: min(10px, 7%);
 }
 
 main p {
@@ -282,7 +286,7 @@ main p {
 .title-container {
     margin-bottom: 0x;
   
-    text-align: center;
+    text-align: left;
     color: #d3d3d3;
     border-bottom: 1px solid #dbdbdb;
     
