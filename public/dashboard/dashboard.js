@@ -210,9 +210,12 @@ function updateFuelWidget(current_level, min_level, max_level) {
 function updateBatteryWidget(voltage) {
     // Calculate battery percentage (assuming 12V battery)
     // 12.7V = 100%, 11.8V = 0%
-    let batteryPercentage = ((voltage - 11.8) / 0.9) * 100;
+    let batteryPercentage = (voltage / 12.7) * 100;
     batteryPercentage = Math.max(0, Math.min(100, batteryPercentage));
     
+    
+    console.log(voltage);
+    console.log(batteryPercentage);
     // Update battery charge visual
     const batteryCharge = document.getElementById("battery-charge");
     if (batteryCharge) {
@@ -227,9 +230,10 @@ function updateBatteryWidget(voltage) {
     
     // Update battery details
     document.getElementById("battery-voltage").innerText = `${voltage.toFixed(1)} V`;
+    //document.getElementById("battery-percentage").innerText = batteryPercentage;
     
     // Set battery health based on voltage
-    let healthStatus = "Critical";
+    let healthStatus = "Good";
     if (voltage >= 12.7) {
         healthStatus = "Excellent";
     } else if (voltage >= 12.4) {
@@ -446,7 +450,7 @@ function showToast(message) {
         blurOverlay.style.display = "none";
     }, 2000);
 }
-
+/*
 // RPM Meter Implementation
 function initializeRpmMeter() {
     // Create RPM meter widget and add to dashboard
@@ -591,7 +595,7 @@ function initializeRpmMeter() {
     window.rpmHistory = [];
     window.rpmMax = 0;
 }
-
+*/
 function calculateRPM(data) {
     // In reality, this would come from a sensor
     // For demonstration, we'll use speed or calculate from other data

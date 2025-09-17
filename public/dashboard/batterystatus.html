@@ -209,7 +209,7 @@
                     return;
                 }
 
-                let cal_level = (level / 12) * 100; // Assuming 12V battery
+                let cal_level = (level / 12.7) * 100; // Assuming 12V battery
                 cal_level = Math.max(0, Math.min(cal_level, 100)); // Ensure value is between 0-100
 
                 charge.style.height = cal_level + "%";

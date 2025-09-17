@@ -60,6 +60,7 @@ body {
     color: var(--text-clr);
     display: grid;
     grid-template-columns: auto 1fr;
+    font-family: 'Poppins', sans-serif;
 }
 
 /* body.light-mode {
@@ -908,8 +909,8 @@ body.light-mode .widget-actions button:hover {
 
 .fuel-container {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 300px;
+    height: 300px;
     border-radius: 50%;
     background-color: var(--dark-sidebar);
     overflow: hidden;
@@ -926,7 +927,7 @@ body.light-mode .fuel-container {
     bottom: 0;
     width: 100%;
     height: 65%;
-    background-color: var(--primary);
+    background-color: rgb(193, 89, 41);
     transition: height 1s ease-in-out;
 }
 
@@ -968,9 +969,10 @@ body.light-mode .fuel-container {
 
 .fuel-details {
     width: 100%;
+    margin-top: -20px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
 }
 
 .detail-item {
@@ -1034,8 +1036,8 @@ body.light-mode .battery-head {
 
 .battery-body {
     position: relative;
-    width: 60px;
-    height: 120px;
+    width: 150px;
+    height: 200px;
     border: 3px solid var(--dark-text);
     border-radius: 8px;
     display: flex;
@@ -1067,9 +1069,10 @@ body.light-mode .battery-body {
 }
 
 #battery-percentage {
-    font-size: 18px;
+    font-size: 25px;
     font-weight: 600;
     color: var(--dark-text);
+    
 }
 
 body.light-mode #battery-percentage {
@@ -1082,6 +1085,8 @@ body.light-mode #battery-percentage {
     flex-direction: column;
     gap: 8px;
 }
+
+
 
 /* Status Widget */
 .status-widget .widget-content {

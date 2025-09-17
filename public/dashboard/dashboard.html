@@ -153,10 +153,7 @@
             <div class="header-right">
                
                 <div class="header-actions">
-                    <button class="notification-btn">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
-                    </button>
+                    
                     <div class="user-menu">
                         <img src="avatar.png" alt="User" id="headerUserAvatar">
                         <div class="user-dropdown">
@@ -261,6 +258,7 @@
                 </div>
                 
                 <!-- Enhanced Battery Widget -->
+
                 <div class="widget battery-widget">
                     <div class="widget-header">
                         <h2><i class="fas fa-car-battery"></i> Battery Status</h2>
@@ -271,7 +269,7 @@
                     </div>
                     <div class="widget-content">
                         <div class="battery-display">
-                            <div class="battery-container">
+                            <div class="battery-container1">
                                 <div class="battery-head"></div>
                                 <div class="battery-body">
                                     <div class="battery-charge" id="battery-charge" style="height: 78%;">
@@ -286,9 +284,8 @@
                                         <span class="marker" style="bottom: 80%;">80%</span>
                                     </div>
                                 </div>
-                                <div class="battery-status">
-                                    <i class="fas fa-bolt"></i>
-                                    <span id="battery-percentage">78%</span>
+                                <div>
+                                    <span id="battery-percentage" class="show_percentage">80%</span>
                                 </div>
                             </div>
                         </div>
@@ -309,7 +306,7 @@
                     </div>
                 </div>
                 
-              
+            
                 
                 <!-- Vehicle Controls Widget -->
                 <div class="widget controls-widget">
@@ -380,14 +377,7 @@
                                     <p id="led-status" class="status-value">ON</p>
                                 </div>
                             </div>
-                            <div class="status-item">
-                                <div class="status-icon">
-                                    <i class="fas fa-door-open"></i>
-                                </div>
-                                <div class="status-info">
-                                    <h4>Door Status</h4>
-                                    <p id="door-status" class="status-value warning">Rear Left Open</p>
-                                </div>
+                            
                             </div>
                         </div>
                     </div>
