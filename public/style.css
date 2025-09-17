@@ -128,4 +128,55 @@ button:hover {
     height: 16px;
   }
 
+  /* Toast Notification Styles */
+.toast {
+    visibility: hidden; /* Hidden by default */
+    min-width: 250px; /* Set a minimum width */
+    background-color: #3a3a3a; /* Dark background */
+    font-size: larger;
+    
+    font-family: Poppins, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    color: #ffffff; /* White text */
+    text-align: center; /* Centered text */
+    border-radius: 20px; /* Rounded corners */
+    padding: 16px; /* Padding */
+    position: fixed; /* Fixed position */
+    z-index: 1000; /* Ensure it's on top */
+    bottom: 50%; /* Position at the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center horizontally */
+    opacity: 0; /* Start fully transparent */
+    transition: opacity 0.5s, visibility 0.7; /* Smooth transition */
+}
+
+/* Show the toast */
+.toast.show {
+    visibility: visible; /* Make it visible */
+    opacity: 1; /* Fully opaque */
+}
+/* Blur Overlay Styles */
+.blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    backdrop-filter: blur(5px); /* Apply blur effect */
+    z-index: 999; /* Ensure it's above other content */
+    display: none; /* Hidden by default */
+}
+
+/* Apply blur to the entire page when the overlay is visible */
+body.blurred {
+    overflow: hidden; /* Prevent scrolling */
+}
+
+body.blurred .blur-overlay {
+    display: block; /* Show the blur overlay */
+}
+
+
+
   

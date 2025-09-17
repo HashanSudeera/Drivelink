@@ -1,156 +1,911 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboardstyle.css">
+    <title>Profile - DriveLink</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="../app.js"></script>
-    <script src="dashboard.js" defer></script>
+    <title>Profile Settings</title>
+    <script src="js/sidebar.js"></script>
+    <script src="js/profile.js"></script>
+    
+    <link rel="stylesheet" href="css/dashboardstyle.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <script src="dashboard.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        h1 {
+          margin-top: 5px;
+          margin-bottom: 5px;
+        }
+      
+            .device-form-container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: var(--card-bg);
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            .device-form-container h2 {
+                margin-bottom: 20px;
+                color: var(--text-color);
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: var(--text-color);
+            }
+            
+            .form-group input, .form-group select {
+                width: 100%;
+                padding: 12px;
+                border-radius: 6px;
+                border: 1px solid var(--border-color);
+                background-color: var(--input-bg);
+                color: var(--text-color);
+                font-size: 14px;
+            }
+            
+            .form-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 30px;
+            }
+            
+            .cancel-btn, .save-btn {
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .cancel-btn {
+                background-color: transparent;
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+            }
+            
+            .save-btn {
+                background-color: var(--primary-color);
+                border: none;
+                color: white;
+            }
+            
+            .cancel-btn:hover {
+                background-color: var(--hover-bg);
+            }
+            
+            .save-btn:hover {
+                background-color: var(--primary-dark);
+            }
+            
+            .devices-list {
+                margin-top: 30px;
+            }
+            
+            .device-card {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px;
+                margin-bottom: 15px;
+                background-color: var(--card-bg);
+                border-radius: 8px;
+                border: 1px solid var(--border-color);
+            }
+            
+            .device-info {
+                flex: 1;
+            }
+            
+            .device-name {
+                font-weight: 600;
+                color: var(--text-color);
+                margin-bottom: 5px;
+            }
+            
+            .device-id {
+                color: var(--text-secondary);
+                font-size: 13px;
+            }
+            
+            .device-actions {
+                display: flex;
+                gap: 10px;
+            }
+            
+            .device-btn {
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                color: var(--text-secondary);
+                font-size: 16px;
+                padding: 5px;
+                transition: color 0.3s;
+            }
+            
+            .device-btn:hover {
+                color: var(--primary-color);
+            }
+            
+            .device-btn.delete:hover {
+                color: var(--red);
+            }
+            
+            .current-device {
+                border-left: 4px solid var(--primary-color);
+            }
+            
+            .current-badge {
+                background-color: var(--primary-color);
+                color: white;
+                font-size: 11px;
+                padding: 2px 8px;
+                border-radius: 10px;
+                margin-left: 10px;
+            }
+        </style>
+ 
 </head>
 
-<body id="dashboardPage">
-    <nav id="sidebar">
-        <ul>
-            <li>
-                <p class="logo" id="usernametag">Hi, -- !</p>
-                <button onclick=toggleSidebar() id="toggle-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill="#e8eaed">
-                        <path
-                            d="m313-480 155 156q11 11 11.5 27.5T468-268q-11 11-28 11t-28-11L228-452q-6-6-8.5-13t-2.5-15q0-8 2.5-15t8.5-13l184-184q11-11 27.5-11.5T468-692q11 11 11 28t-11 28L313-480Zm264 0 155 156q11 11 11.5 27.5T732-268q-11 11-28 11t-28-11L492-452q-6-6-8.5-13t-2.5-15q0-8 2.5-15t8.5-13l184-184q11-11 27.5-11.5T732-692q11 11 11 28t-11 28L577-480Z" />
-                    </svg>
-                </button>
-            </li>
-            <li>
-                <a href="dashboard.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill="#e8eaed">
-                        <path
-                            d="M520-640v-160q0-17 11.5-28.5T560-840h240q17 0 28.5 11.5T840-800v160q0 17-11.5 28.5T800-600H560q-17 0-28.5-11.5T520-640ZM120-480v-320q0-17 11.5-28.5T160-840h240q17 0 28.5 11.5T440-800v320q0 17-11.5 28.5T400-440H160q-17 0-28.5-11.5T120-480Zm400 320v-320q0-17 11.5-28.5T560-520h240q17 0 28.5 11.5T840-480v320q0 17-11.5 28.5T800-120H560q-17 0-28.5-11.5T520-160Zm-400 0v-160q0-17 11.5-28.5T160-360h240q17 0 28.5 11.5T440-320v160q0 17-11.5 28.5T400-120H160q-17 0-28.5-11.5T120-160Zm80-360h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z" />
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <!--<li>
-                <button onclick=toggleSubMenu(this) class="dropdown-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill="#e8eaed">
-                        <path
-                            d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h207q16 0 30.5 6t25.5 17l57 57h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Zm400-160v40q0 17 11.5 28.5T600-320q17 0 28.5-11.5T640-360v-40h40q17 0 28.5-11.5T720-440q0-17-11.5-28.5T680-480h-40v-40q0-17-11.5-28.5T600-560q-17 0-28.5 11.5T560-520v40h-40q-17 0-28.5 11.5T480-440q0 17 11.5 28.5T520-400h40Z" />
-                    </svg>
-                    <span>Create</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                        fill="#e8eaed">
-                        <path
-                            d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z" />
-                    </svg>
-                </button>
-                <ul class="sub-menu">
-                    <div>
-                        <li><a href="#">Folder</a></li>
-                        <li><a href="#">Document</a></li>
-                        <li><a href="#">Project</a></li>
-                    </div>
-                </ul>
-            </li>-->
-            <li>
-                <a href="fuelstatus.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                        fill="#e3e3e3">
-                        <path
-                            d="M160-120v-640q0-33 23.5-56.5T240-840h240q33 0 56.5 23.5T560-760v280h40q33 0 56.5 23.5T680-400v180q0 17 11.5 28.5T720-180q17 0 28.5-11.5T760-220v-288q-9 5-19 6.5t-21 1.5q-42 0-71-29t-29-71q0-32 17.5-57.5T684-694l-84-84 42-42 148 144q15 15 22.5 35t7.5 41v380q0 42-29 71t-71 29q-42 0-71-29t-29-71v-200h-60v300H160zm80-440h240v-200H240v200zm480 0q17 0 28.5-11.5T760-600q0-17-11.5-28.5T720-640q-17 0-28.5 11.5T680-600q0 17 11.5 28.5T720-560zM240-200h240v-280H240v280zm240 0H240h240z" />
-                    </svg>
-                    <span>Fuel Status</span>
-                </a>
-            </li>
-            <li>
-                <a href="batterystatus.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                        fill="#e3e3e3">
-                        <path
-                            d="M200-280q-17 0-28.5-11.5T160-320v-80H80v-160h80v-80q0-17 11.5-28.5T200-680h640q17 0 28.5 11.5T880-640v320q0 17-11.5 28.5T840-280H200zm40-80h160v-240H240v240z" />
-                    </svg>
-                    <span>Battery Status</span>
-                </a>
-            </li>
-            <li>
-                <a href="livetraking.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                        fill="#e3e3e3">
-                        <path
-                            d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80zm0-480z" />
-                    </svg>
-                    <span>Live Tracking</span>
-                </a>
-            </li>
-            <li>
-                <a href="tripmange.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                        fill="#e3e3e3">
-                        <path
-                            d="M300-300l280-80 80-280-280 80-80 280zm180-120q-25 0-42.5-17.5T420-480q0-25 17.5-42.5T480-540q25 0 42.5 17.5T540-480q0 25-17.5 42.5T480-420zm0 340q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80zm0-80q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160zm0-320z" />
-                    </svg>
-                    <span>Trip Manage</span>
-                </a>
-            </li>
-            
-            <li>
-                <a href="vehicalhelth.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                        fill="#e3e3e3">
-                        <path
-                            d="M480-120l-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228zm0-273z" />
-                    </svg>
-                    <span>Vehical Helth</span>
-                </a>
-            </li>
-            <li>
-                <button onclick=toggleSubMenu(this) class="dropdown-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                        fill="#e3e3e3">
-                        <path
-                            d="M80-600v-160q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v160h-80v-160H160v160H80zm80 360q-33 0-56.5-23.5T80-320v-200h80v200h640v-200h80v200q0 33-23.5 56.5T800-240H160zM40-120v-80h880v80H40zm440-420zM80-520v-80h240q11 0 21 6t15 16l47 93 123-215q5-9 14-14.5t20-5.5q11 0 21 5.5t15 16.5l49 98h235v80H620q-11 0-21-5.5T584-542l-26-53-123 215q-5 10-15 15t-21 5q-11 0-20.5-6T364-382l-69-138H80z" />
-                    </svg>
-                    <span>Report</span>
-                </button>
-                <ul class="sub-menu">
-                    <div>
-                        <li><a href="tripreport.html">Trip Report</a></li>
-                        <li><a href="fuelreport.html">Fule Report</a></li>
-                        <li><a href="batteryreport.html">Battery Report</a></li>
-                    </div>
-                </ul>
-            </li>
-            
-            <li class="active">
-                <a href="profile.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                        fill="#e3e3e3">
-                        <path
-                            d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47zM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560zm0-80zm0 400z" />
-                    </svg>
-                    <span>Profile</span>
-                </a>
-            </li>
+<body id="dashboardPage" class="dark-mode">
+    <div class="page-container">
+    <nav id="sidebar" class="expanded">
+           
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <img src="logo.png" alt="DriveLink" class="logo-img">
+                
+                <span class="logo-text">
+                    <span class="highlight">Drive</span><span class="highlight2">link</span>
+                </span>
+
+            </div>
+            <button id="toggle-btn" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        
+<!--  https://fontawesome.com/search?q=user&o=r&ic=free&s=solid&it=round&ip=classic -->
+
+<ul class="sidebar-menu">
+  
+    <li>
+       
+        <p class="username-text" id="usernametag">Hi, -- !</p>
+        <div class="divider"></div>
+   
+      
+    </li>
+   
+    <li >
+        <a href="dashboard.html">
+            <i class="fa-solid fa-solar-panel"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+   
+    <li>
+        <a href="fuelstatus.html">
+            <i class="fa-solid fa-gas-pump"></i>
+            <span>Fuel Status</span>
+        </a>
+    </li>
+    <li>
+        <a href="batterystatus.html">
+            <i class="fa-solid fa-car-battery"></i>
+            <span>Battery Status</span>
+        </a>
+    </li>
+    <li>
+        <a href="livetraking.html">
+            <i class="fa-solid fa-map-location-dot"></i>
+            </svg>
+            <span>Live Tracking</span>
+        </a>
+    </li>
+
+
+    <li>
+        <a href="tripmange.html">
+            <i class="fa-solid fa-compass"></i>
+            <span>Trip Manage</span>
+        </a>
+    </li>
+    <li>
+        <a href="vehicalhelth.html">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <span>Vehical Helth</span>
+        </a>
+    </li>
+    <li class="has-submenu">
+        <a href="#" onclick="toggleSubMenu(this)">
+            <i class="fa-solid fa-flask-vial"></i>
+            <span>Reports</span>
+            <i class="fas fa-chevron-down arrow"></i>
+        </a>
+        <ul class="sub-menu">
+            <li><a href="tripreport.html"> Trip Report</a></li>
+            <li><a href="fuelreport.html"> Fuel Report</a></li>
+            <li><a href="batteryreport.html"> Battery Report</a></li>
         </ul>
-    </nav>
+    </li>
+ 
+    <li>
+        <a href="reminders.html">
+            <i class="fa-solid fa-bell"></i>
+            <span>Reminders</span>
+        </a>
+    </li>
+    <li>
+        <a href="history.html">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>History</span>
+        </a>
+    </li>
+    <li class="active">
+        <a href="profile.html">
+            <i class="fa-solid fa-user-large"></i>
+            <span>Profile</span>
+        </a>
+    </li>
+</ul>
+<div class="divider"></div>
+
+<div class="sidebar-footer">
+    <button id="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+        <span>Dark Mode</span>
+    </button>
+    <button id="logout-button" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+    </button>
+</div>
+</div>
+</nav>
+   
 
     <!-- ======================================================================================================================-->
+
+     
+       
+    
     <main>
-        <div class="title-container">
-            <h1>Drive<span class="highlight">Link</span></h1>
-            <p>Profile</p>
+        <header class="main-header">
+            <div class="header-left">
+                <h1>Profile</h1>
+            </div>
+            <div class="device-selector-container">
+                <select id="deviceSelector" class="device-selector">
+                    <option value="">Select a device</option>
+                    <!-- Options will be populated via JavaScript -->
+                </select>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    
+                    <div class="user-menu">
+                        <img src="avatar.png" alt="User" id="headerUserAvatar">
+                        <div class="user-dropdown">
+                            <a href="profile.html"><i class="fas fa-user-circle"></i> My Profile</a>
+                            <a href="#" id="user-id-change"><i class="fas fa-edit"></i> Change User ID</a>
+                            <a href="#" id="settings-link"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#" id="header-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="profile-content">
+            <div class="profile-header">
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar">
+                        <img src="avatar.png" alt="User Avatar" id="profileAvatar">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    </div>
+                    <button class="edit-avatar-btn" id="changeAvatarBtn">
+                        <i class="fas fa-pen"></i> Change Photo
+                    </button>
+                </div>
+                <div class="profile-info">
+                    <h2 id="profileName">John Doe</h2>
+                    <p id="profileEmail">john.doe@example.com</p>
+                    <p class="member-since">Member since: <span id="memberSince">January 2023</span></p>
+                </div>
+            </div>
+    
+            <div class="profile-sections">
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-user"></i> Personal Information</h3>
+                        <button class="edit-section-btn" data-section="personal"><i class="fas fa-edit"></i></button>
+                    </div>
+                    <div class="section-content" id="personal-info-section">
+                        <div class="info-row">
+                            <div class="info-label">Full Name</div>
+                            <div class="info-value" id="userFullName">John Doe</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value" id="userPhone">+1 (555) 123-4567</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Address</div>
+                            <div class="info-value" id="userAddress">123 Main Street, City, Country</div>
+                        </div>
+                    </div>
+                    <div class="section-edit" id="personal-info-edit" style="display: none;">
+                        <div class="form-group">
+                            <label for="fullNameInput">Full Name</label>
+                            <input type="text" id="fullNameInput" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneInput">Phone</label>
+                            <input type="tel" id="phoneInput" value="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="addressInput">Address</label>
+                            <textarea id="addressInput">123 Main Street, City, Country</textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="cancel-btn" data-section="personal">Cancel</button>
+                            <button class="save-btn" data-section="personal">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-car"></i> Vehicle Information</h3>
+                        <button class="edit-section-btn" data-section="vehicle"><i class="fas fa-edit"></i></button>
+                    </div>
+                    <div class="section-content" id="vehicle-info-section">
+                        <div id="no-vehicle-message" style="display: none;">
+                            <p>No vehicle information available for this device ID.</p>
+                        </div>
+                        <div id="vehicle-details">
+                            <div class="info-row">
+                                <div class="info-label">Vehicle Model</div>
+                                <div class="info-value" id="vehicleModel">Toyota Camry</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Year</div>
+                                <div class="info-value" id="vehicleYear">2022</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">License Plate</div>
+                                <div class="info-value" id="vehiclePlate">ABC-1234</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Fuel Type</div>
+                                <div class="info-value" id="vehicleFuel">Gasoline</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Mileage (km)</div>
+                                <div class="info-value" id="vehicleMileage">5000</div>
+                            </div>
+                        </div>
+                    </div>
+                  
+    
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-cog"></i> Account Settings</h3>
+                        <button class="edit-section-btn" data-section="account"><i class="fas fa-edit"></i></button>
+                    </div>
+                    <div class="section-content" id="account-settings-section">
+                        <div class="info-row">
+                            <div class="info-label">Email</div>
+                            <div class="info-value" id="userEmail">john.doe@example.com</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Password</div>
+                            <div class="info-value">••••••••</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Current Device ID</div>
+                            <div class="info-value" id="currentDeviceId">DL-2304982</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Notifications</div>
+                            <div class="info-value toggle-container">
+                                <label class="toggle">
+                                    <input type="checkbox" id="notificationToggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-edit" id="account-settings-edit" style="display: none;">
+                        <div class="form-group">
+                            <label for="emailInput">Email</label>
+                            <input type="email" id="emailInput" value="john.doe@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="currentPasswordInput">Current Password</label>
+                            <input type="password" id="currentPasswordInput" placeholder="Enter current password">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPasswordInput">New Password</label>
+                            <input type="password" id="newPasswordInput" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPasswordInput">Confirm New Password</label>
+                            <input type="password" id="confirmPasswordInput" placeholder="Confirm new password">
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-container">Enable notifications
+                                <input type="checkbox" id="notificationCheckbox" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button class="cancel-btn" data-section="account">Cancel</button>
+                            <button class="save-btn" data-section="account">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-bell"></i> Notification Preferences</h3>
+                        <button class="edit-section-btn" data-section="notifications"><i class="fas fa-edit"></i></button>
+                    </div>
+                    <div class="section-content" id="notifications-section">
+                        <div class="info-row">
+                            <div class="info-label">Fuel Level Alerts</div>
+                            <div class="info-value toggle-container">
+                                <label class="toggle">
+                                    <input type="checkbox" id="fuelAlertToggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Battery Level Alerts</div>
+                            <div class="info-value toggle-container">
+                                <label class="toggle">
+                                    <input type="checkbox" id="batteryAlertToggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Maintenance Reminders</div>
+                            <div class="info-value toggle-container">
+                                <label class="toggle">
+                                    <input type="checkbox" id="maintenanceToggle" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Trip Notifications</div>
+                            <div class="info-value toggle-container">
+                                <label class="toggle">
+                                    <input type="checkbox" id="tripToggle">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-edit" id="notifications-edit" style="display: none;">
+                        <div class="form-group">
+                            <label class="checkbox-container">Fuel Level Alerts
+                                <input type="checkbox" id="fuelAlertCheckbox" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-container">Battery Level Alerts
+                                <input type="checkbox" id="batteryAlertCheckbox" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-container">Maintenance Reminders
+                                <input type="checkbox" id="maintenanceCheckbox" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-container">Trip Notifications
+                                <input type="checkbox" id="tripCheckbox">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button class="cancel-btn" data-section="notifications">Cancel</button>
+                            <button class="save-btn" data-section="notifications">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="danger-zone">
+                <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+                <div class="danger-actions">
+                    <button class="danger-btn" id="resetDataBtn">
+                        <i class="fas fa-sync-alt"></i> Reset Data
+                    </button>
+                    <button class="danger-btn" id="deleteAccountBtn">
+                        <i class="fas fa-trash-alt"></i> Delete Account
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="container">
-            <h1>Profile</h1>
+        
+        <!-- Modal for Delete Account confirmation -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Delete Account</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                    <p>All your data will be permanently removed from our servers.</p>
+                    <div class="form-group">
+                        <label for="deleteConfirmPassword">Enter your password to confirm</label>
+                        <input type="password" id="deleteConfirmPassword" placeholder="Your password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="cancel-btn" id="cancelDelete">Cancel</button>
+                    <button class="danger-btn" id="confirmDelete">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Modal for changing device ID -->
+        <div id="changeDeviceModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-edit"></i> Change Device ID</h3>
+                    <span class="close-modal" id="closeDeviceModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Select the device ID you want to switch to:</p>
+                    <div class="form-group">
+                        <label for="deviceIdSelect">Device ID</label>
+                        <select id="deviceIdSelect">
+                            <!-- Will be populated via JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="cancel-btn" id="cancelChangeDevice">Cancel</button>
+                    <button class="save-btn" id="confirmChangeDevice">Switch Device</button>
+                </div>
+            </div>
+        </div>.
+        <div class="device-form-container">
+            <h2><i class="fas fa-plus-circle"></i> Add New Device</h2>
+            <form id="addDeviceForm">
+                <div class="form-group">
+                    <label for="deviceId">Device ID</label>
+                    <input type="text" id="deviceId" placeholder="Enter device ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="deviceName">Device Name (Optional)</label>
+                    <input type="text" id="deviceName" placeholder="E.g., My Honda">
+                </div>
+                <div class="form-group">
+                    <label for="vehicleType">Vehicle Type</label>
+                    <select id="vehicleType" required>
+                        <option value="">Select vehicle type</option>
+                        <option value="dio">Dio</option>
+                        <option value="ct100">CT100</option>
+                        <option value="fz">FZ</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mileage">Current Mileage (km)</label>
+                    <input type="number" id="mileage" placeholder="Enter current mileage" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelAddDevice">Cancel</button>
+                    <button type="submit" class="save-btn" id="saveDevice">Add Device</button>
+                </div>
+            </form>
+
+            <div class="devices-list">
+                <h2><i class="fas fa-car"></i> Your Devices</h2>
+                <div id="devicesList">
+                    <!-- Devices will be populated here by JS -->
+                </div>
+            </div>
+        </div>
+
+        <script src="js/sidebar.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Check if user is logged in
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        // User is signed in
+                        loadUserDevices(user.uid);
+                    } else {
+                        // No user is signed in, redirect to login
+                        window.location.href = '../login.html';
+                    }
+                });
+    
+                // Form submission handler
+                document.getElementById('addDeviceForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    addNewDevice();
+                });
+    
+                document.getElementById('cancelAddDevice').addEventListener('click', function() {
+                    window.location.href = 'profile.html';
+                });
+    
+                // Close modal
+                document.querySelector('.close-modal').addEventListener('click', function() {
+                    document.getElementById('deleteDeviceModal').style.display = 'none';
+                    document.getElementById('blurOverlay').style.display = 'none';
+                });
+    
+                document.getElementById('cancelDeleteDevice').addEventListener('click', function() {
+                    document.getElementById('deleteDeviceModal').style.display = 'none';
+                    document.getElementById('blurOverlay').style.display = 'none';
+                });
+    
+                document.getElementById('confirmDeleteDevice').addEventListener('click', function() {
+                    const deviceIdToDelete = this.getAttribute('data-device-id');
+                    deleteDevice(deviceIdToDelete);
+                });
+            });
+    
+            // Load user's devices
+            function loadUserDevices(userId) {
+                const db = firebase.firestore();
+                db.collection('users').doc(userId).collection('devices').get()
+                    .then((querySnapshot) => {
+                        const devicesList = document.getElementById('devicesList');
+                        devicesList.innerHTML = '';
+                        
+                        if (querySnapshot.empty) {
+                            devicesList.innerHTML = '<p>No devices added yet.</p>';
+                            return;
+                        }
+                        
+                        // Get current device ID from localStorage
+                        const currentDeviceId = localStorage.getItem('deviceId');
+                        
+                        querySnapshot.forEach((doc) => {
+                            const device = doc.data();
+                            const deviceId = device.deviceId;
+                            const isCurrent = deviceId === currentDeviceId;
+                            
+                            const deviceCard = document.createElement('div');
+                            deviceCard.className = `device-card ${isCurrent ? 'current-device' : ''}`;
+                            
+                            deviceCard.innerHTML = `
+                                <div class="device-info">
+                                    <div class="device-name">${device.deviceName || 'Unnamed Device'} 
+                                        ${isCurrent ? '<span class="current-badge">Current</span>' : ''}
+                                    </div>
+                                    <div class="device-id">ID: ${deviceId}</div>
+                                    <div class="device-details">
+                                        ${device.vehicleType ? `Vehicle: ${device.vehicleType.toUpperCase()}` : ''}
+                                        ${device.mileage ? ` • Mileage: ${device.mileage} km` : ''}
+                                    </div>
+                                </div>
+                                <div class="device-actions">
+                                    ${!isCurrent ? `<button class="device-btn switch" data-device-id="${deviceId}">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </button>` : ''}
+                                    <button class="device-btn edit" data-device-id="${deviceId}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="device-btn delete" data-device-id="${deviceId}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            `;
+                            
+                            devicesList.appendChild(deviceCard);
+                        });
+                        
+                        // Add event listeners to buttons
+                        document.querySelectorAll('.device-btn.switch').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const deviceId = this.getAttribute('data-device-id');
+                                switchToDevice(deviceId);
+                            });
+                        });
+                        
+                        document.querySelectorAll('.device-btn.edit').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const deviceId = this.getAttribute('data-device-id');
+                                // Navigate to edit page or show edit modal
+                                showToast('Edit functionality will be implemented soon');
+                            });
+                        });
+                        
+                        document.querySelectorAll('.device-btn.delete').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const deviceId = this.getAttribute('data-device-id');
+                                showDeleteConfirmation(deviceId);
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Error loading devices:", error);
+                        showToast("Failed to load devices");
+                    });
+            }
+    
+            // Add new device
+            function addNewDevice() {
+                const deviceId = document.getElementById('deviceId').value.trim();
+                const deviceName = document.getElementById('deviceName').value.trim();
+                const vehicleType = document.getElementById('vehicleType').value;
+                const mileage = document.getElementById('mileage').value.trim();
+                
+                // Basic validation
+                if (!deviceId || !vehicleType || !mileage) {
+                    showToast("Please fill all required fields");
+                    return;
+                }
+                
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    showToast("You need to be logged in");
+                    return;
+                }
+                
+                const db = firebase.firestore();
+                
+                // Check if device exists in the Firebase Realtime Database
+                firebase.database().ref(deviceId).once('value')
+                    .then((snapshot) => {
+                        if (!snapshot.exists()) {
+                            showToast("Device ID not found in system. Please check the ID.");
+                            return Promise.reject("Device not found");
+                        }
+                        
+                        // Device exists, add it to user's devices collection
+                        return db.collection('users').doc(user.uid).collection('devices').doc(deviceId).set({
+                            deviceId: deviceId,
+                            deviceName: deviceName || deviceId,
+                            vehicleType: vehicleType,
+                            mileage: mileage,
+                            addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    })
+                    .then(() => {
+                        showToast("Device added successfully!");
+                        document.getElementById('addDeviceForm').reset();
+                        loadUserDevices(user.uid);
+                    })
+                    .catch((error) => {
+                        if (error !== "Device not found") {
+                            console.error("Error adding device:", error);
+                            showToast("Failed to add device: " + error.message);
+                        }
+                    });
+            }
+    
+            // Switch to a different device
+            function switchToDevice(deviceId) {
+                const user = firebase.auth().currentUser;
+                if (!user) return;
+                
+                const db = firebase.firestore();
+                
+                db.collection('users').doc(user.uid).update({
+                    deviceId: deviceId
+                })
+                .then(() => {
+                    // Update localStorage
+                    localStorage.setItem('deviceId', deviceId);
+                    
+                    // Update UI
+                    showToast("Switched to new device!");
+                    loadUserDevices(user.uid);
+                    
+                    // Optionally reload page
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                })
+                .catch((error) => {
+                    console.error("Error switching device:", error);
+                    showToast("Failed to switch device");
+                });
+            }
+    
+            // Show delete confirmation
+            function showDeleteConfirmation(deviceId) {
+                document.getElementById('confirmDeleteDevice').setAttribute('data-device-id', deviceId);
+                document.getElementById('deleteDeviceModal').style.display = 'block';
+                document.getElementById('blurOverlay').style.display = 'block';
+            }
+    
+            // Delete device
+            function deleteDevice(deviceId) {
+                const user = firebase.auth().currentUser;
+                if (!user) return;
+                
+                const db = firebase.firestore();
+                const currentDeviceId = localStorage.getItem('deviceId');
+                
+                // Check if deleting the current device
+                if (deviceId === currentDeviceId) {
+                    showToast("Cannot delete your current device. Please switch to another device first.");
+                    document.getElementById('deleteDeviceModal').style.display = 'none';
+                    document.getElementById('blurOverlay').style.display = 'none';
+                    return;
+                }
+                
+                db.collection('users').doc(user.uid).collection('devices').doc(deviceId).delete()
+                    .then(() => {
+                        showToast("Device deleted successfully");
+                        document.getElementById('deleteDeviceModal').style.display = 'none';
+                        document.getElementById('blurOverlay').style.display = 'none';
+                        loadUserDevices(user.uid);
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting device:", error);
+                        showToast("Failed to delete device");
+                        document.getElementById('deleteDeviceModal').style.display = 'none';
+                        document.getElementById('blurOverlay').style.display = 'none';
+                    });
+            }
+    
+            // Function to show toast notification
+            function showToast(message) {
+                const toast = document.getElementById("toast");
+                const toastMessage = document.getElementById("toastMessage");
+                const blurOverlay = document.getElementById("blurOverlay");
+    
+                toastMessage.textContent = message;
+                toast.classList.add("show");
+                
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2000);
+            }
+        </script>
+        <!-- Blur Overlay -->
+        <div id="blurOverlay" class="blur-overlay"></div>
+        <div id="toast" class="toast">
+            <span id="toastMessage">DriveLink</span>
         </div>
     </main>
+</div>
 
 
 </body>

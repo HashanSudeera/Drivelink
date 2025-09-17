@@ -5,13 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboardstyle.css">
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    
+    
     <script src="../app.js"></script>
-    <script src="dashboard.js" defer></script>
+    <script src="dashboard.js"defer></script>
+    
+    <link rel="stylesheet" href="dashboardstyle.css">
+  
+ 
+    
+    
+   
+    
 </head>
 
 <body id="dashboardPage">
@@ -37,7 +43,28 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-            
+            <!--<li>
+                <button onclick=toggleSubMenu(this) class="dropdown-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#e8eaed">
+                        <path
+                            d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h207q16 0 30.5 6t25.5 17l57 57h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Zm400-160v40q0 17 11.5 28.5T600-320q17 0 28.5-11.5T640-360v-40h40q17 0 28.5-11.5T720-440q0-17-11.5-28.5T680-480h-40v-40q0-17-11.5-28.5T600-560q-17 0-28.5 11.5T560-520v40h-40q-17 0-28.5 11.5T480-440q0 17 11.5 28.5T520-400h40Z" />
+                    </svg>
+                    <span>Create</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#e8eaed">
+                        <path
+                            d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z" />
+                    </svg>
+                </button>
+                <ul class="sub-menu">
+                    <div>
+                        <li><a href="#">Folder</a></li>
+                        <li><a href="#">Document</a></li>
+                        <li><a href="#">Project</a></li>
+                    </div>
+                </ul>
+            </li>-->
             <li>
                 <a href="fuelstatus.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
@@ -68,7 +95,7 @@
                     <span>Live Tracking</span>
                 </a>
             </li>
-            
+         
             <li>
                 <a href="tripmange.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
@@ -106,7 +133,8 @@
                     </div>
                 </ul>
             </li>
-            <li>
+           
+            <li class="active">
                 <a href="reminders.html">
                     <svg  xmlns="http://www.w3.org/2000/svg"  height="24" viewBox="0 -960 960 960" width="24"
                         fill="#e3e3e3">
@@ -124,7 +152,6 @@
                     <span>History</span>
                 </a>
             </li>
-            
             <li>
                 <a href="profile.html">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
@@ -143,18 +170,115 @@
         <span id="toastMessage">DriveLink</span>
     </div>
 
-    <!-- ======================================================================================================================-->
+   
     <main>
-        <div class="title-container">
-            <h1><span class="highlight">Drive</span>Link</h1>
-            <p>Reports</p>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+            import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            // Handle dropdown change
+            function handleTitleChange() {
+                const titleSelect = document.getElementById("title");
+                const customTitleInput = document.getElementById("customTitle");
+
+                if (titleSelect.value === "Custom") {
+                    customTitleInput.style.display = "block";
+                } else {
+                    customTitleInput.style.display = "none";
+                }
+            }
+
+            // Handle color selection
+            const colorOptions = document.querySelectorAll(".color-option");
+            const colorInput = document.getElementById("color");
+
+            colorOptions.forEach((option) => {
+                option.addEventListener("click", () => {
+                    // Remove selected class from all options
+                    colorOptions.forEach((opt) => opt.classList.remove("selected"));
+                    // Add selected class to the clicked option
+                    option.classList.add("selected");
+                    // Update the hidden input value
+                    colorInput.value = option.getAttribute("data-color");
+                });
+            });
+
+            // Handle form submission
+            document.getElementById("reminderForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const deviceId = localStorage.getItem("deviceId");
+                const titleSelect = document.getElementById("title");
+                const customTitleInput = document.getElementById("customTitle");
+                const title = titleSelect.value === "Custom" ? customTitleInput.value : titleSelect.value;
+                const description = document.getElementById("description").value;
+                const date = document.getElementById("date").value;
+                const startTime = document.getElementById("startTime").value;
+                const color = colorInput.value;
+
+                try {
+                    await addDoc(collection(db, `devices/${deviceId}/reminders`), {
+                        title,
+                        description,
+                        date,
+                        startTime,
+                        color,
+                        createdAt: new Date().toISOString(),
+                    });
+                    alert("Reminder added successfully!");
+                    window.location.href = "reminders.html"; // Redirect to reminders page
+                } catch (error) {
+                    console.error("Error adding reminder: ", error);
+                    alert("Failed to add reminder.");
+                }
+            });
+        </script>
+        <div class="addreminder">
+            <h1>Add New Reminder</h1>
+        <div class="content">
+            <div class="form-container">
+                <form id="reminderForm">
+                    <label for="title">Title:</label>
+                    <select id="title" name="title" onchange="handleTitleChange()">
+                        <option value="">Select a reminder type</option>
+                        <option value="Service Vehicle">Service Vehicle</option>
+                        <option value="Tire Change">Tire Change</option>
+                        <option value="Engine Check">Engine Check</option>
+                        <option value="Oil Change">Oil Change</option>
+                        <option value="Brake Inspection">Brake Inspection</option>
+                        <option value="Custom">Custom</option>
+                    </select>
+                    <input type="text" id="customTitle" name="customTitle" placeholder="Enter custom title" style="display: none;">
+
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Enter a brief description"></textarea>
+
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required>
+
+                    <label for="startTime">Start Time:</label>
+                    <input type="time" id="startTime" name="startTime" required>
+
+                    <label>Choose a Color:</label>
+                    <div class="color-options">
+                        <div class="color-option" data-color="#007bff" style="background-color: #007bff;"></div>
+                        <div class="color-option" data-color="#28a745" style="background-color: #28a745;"></div>
+                        <div class="color-option" data-color="#dc3545" style="background-color: #dc3545;"></div>
+                        <div class="color-option" data-color="#ffc107" style="background-color: #ffc107;"></div>
+                        <div class="color-option" data-color="#17a2b8" style="background-color: #17a2b8;"></div>
+                    </div>
+                    <input type="hidden" id="color" name="color" value="#007bff">
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </div>
-        <div class="container">
-            <h1>Reports</h1>
-        </div>
+    </div>
+      
+       
     </main>
-
-
 </body>
-
 </html>

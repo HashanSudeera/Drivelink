@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminders</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <link rel="stylesheet" href="css/dashboardstyle.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="../app.js"></script>
+    <script src="dashboard.js" defer></script>
+
+
+    <script src="js/sidebar.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body id="dashboardPage" class="dark-mode">
+    <div class="page-container">
+        <nav id="sidebar" class="expanded">
+
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="logo.png" alt="DriveLink" class="logo-img">
+
+                    <span class="logo-text">
+                        <span class="highlight">Drive</span><span class="highlight2">link</span>
+                    </span>
+
+                </div>
+                <button id="toggle-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <!--  https://fontawesome.com/search?q=user&o=r&ic=free&s=solid&it=round&ip=classic -->
+
+            <ul class="sidebar-menu">
+
+                <li>
+
+                    <p class="username-text" id="usernametag">Hi, -- !</p>
+                    <div class="divider"></div>
+
+
+                </li>
+
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fa-solid fa-solar-panel"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="fuelstatus.html">
+                        <i class="fa-solid fa-gas-pump"></i>
+                        <span>Fuel Status</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="batterystatus.html">
+                        <i class="fa-solid fa-car-battery"></i>
+                        <span>Battery Status</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="livetraking.html">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        </svg>
+                        <span>Live Tracking</span>
+                    </a>
+                </li>
+
+
+                <li>
+                    <a href="tripmange.html">
+                        <i class="fa-solid fa-compass"></i>
+                        <span>Trip Manage</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="vehicalhelth.html">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        <span>Vehical Helth</span>
+                    </a>
+                </li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubMenu(this)">
+                        <i class="fa-solid fa-flask-vial"></i>
+                        <span>Reports</span>
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li><a href="tripreport.html"> Trip Report</a></li>
+                        <li><a href="fuelreport.html"> Fuel Report</a></li>
+                        <li><a href="batteryreport.html"> Battery Report</a></li>
+                    </ul>
+                </li>
+
+                <li class="active">
+                    <a href="reminders.html">
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Reminders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="history.html">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html">
+                        <i class="fa-solid fa-user-large"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="divider"></div>
+
+            <div class="sidebar-footer">
+                <button id="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                </button>
+                <button id="logout-button" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+    </div>
+    </nav>
+
+    <!-- Blur Overlay -->
+    <div id="blurOverlay" class="blur-overlay"></div>
+    <div id="toast" class="toast">
+        <span id="toastMessage">DriveLink</span>
+    </div>
+
+
+    <main>
+        <div class="title-container">
+            <h1><span class="highlight">Drive</span>Link</h1>
+            <p>Reminders - <span id="device-id">..</span></p>
+        </div>
+        <div class="reminders-container">
+            <h1>Reminders</h1>
+            <button onclick="window.location.href='add_reminder.html'">Add New Reminder</button>
+
+            <!-- Recent Reminders Section -->
+            <div class="recent-reminders">
+                <h2>Recent Reminders</h2>
+                <div class="recent-reminders-list"></div>
+            </div>
+
+            <!-- All Reminders Section -->
+            <div class="all-reminders">
+                <h2>All Reminders</h2>
+                <div id="remindersList" class="reminders-grid"></div>
+            </div>
+
+            <!-- Calendar Section -->
+            <div class="calendar-section">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script type="module">
+
+
+        // Load reminders from Firestore
+        async function loadReminders() {
+            const deviceId = localStorage.getItem("deviceId");
+            const remindersRef = db.collection(`devices/${deviceId}/reminders`);
+            const snapshot = await remindersRef.get();
+            const remindersList = document.getElementById("remindersList");
+            const recentRemindersList = document.querySelector(".recent-reminders-list");
+
+            remindersList.innerHTML = ""; // Clear previous content
+            recentRemindersList.innerHTML = ""; // Clear previous content
+
+            const events = []; // For FullCalendar events
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const reminderCard = document.createElement("div");
+                reminderCard.classList.add("reminder-card");
+                reminderCard.style.setProperty("--reminder-color", data.color);
+
+                reminderCard.innerHTML = `
+                    <h3>${data.title}</h3>
+                    <p>${data.description}</p>
+                    <p><strong>Date:</strong> ${data.date}</p>
+                    <p><strong>Start Time:</strong> ${data.startTime}</p>
+                    <div class="actions">
+                        <button class="edit" data-id="${doc.id}">Edit</button>
+                        <button class="delete" data-id="${doc.id}">Delete</button>
+                    </div>
+                `;
+                remindersList.appendChild(reminderCard);
+
+                // Add to recent reminders (last 5 reminders)
+                if (recentRemindersList.children.length < 3) {
+                    const recentReminder = document.createElement("div");
+                    recentReminder.classList.add("recent-reminder");
+                    recentReminder.innerHTML = `
+                        <h4>${data.title}</h4>
+                        <p>${data.date} - ${data.startTime}</p>
+                    `;
+                    recentRemindersList.appendChild(recentReminder);
+                }
+
+                // Add to FullCalendar events
+                events.push({
+                    title: data.title,
+                    start: data.date,
+                    color: data.color,
+                });
+            });
+
+            // Initialize FullCalendar
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: events,
+                eventDisplay: 'block',
+                eventColor: '#007bff', // Default color
+            });
+            calendar.render();
+        }
+
+        // Event delegation for edit and delete buttons
+        document.addEventListener("click", async (event) => {
+            if (event.target.classList.contains("edit")) {
+                const reminderId = event.target.getAttribute("data-id");
+                window.location.href = `edit_reminder.html?id=${reminderId}`;
+            }
+
+            if (event.target.classList.contains("delete")) {
+                const reminderId = event.target.getAttribute("data-id");
+                const deviceId = localStorage.getItem("deviceId");
+                const reminderRef = db.doc(`devices/${deviceId}/reminders/${reminderId}`);
+                await reminderRef.delete();
+                loadReminders(); // Refresh the list
+            }
+        });
+
+        // Load reminders on page load
+        window.onload = loadReminders;
+    </script>
+</body>
+
+</html>

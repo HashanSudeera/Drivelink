@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     // Get buttons after page loads
     const registerButton = document.getElementById('register-button');
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (loginButton) {
         loginButton.addEventListener('click', loginUser);
-    } 
+    }
     if (googleLoginButton) {
         googleLoginButton.addEventListener('click', googleLogin);
     }
@@ -26,12 +27,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (logoutbutton) {
         logoutbutton.addEventListener('click', logout);
     }
-    
-
 });
 
 // Firebase Configuration
-var firebaseConfig = {
+// Your web app's Firebase configuration
+const firebaseConfig = {
     apiKey: "AIzaSyAa9bahojYMk_1meGG8YCgUDFNj6MEHPeI",
     authDomain: "espclientsnew.firebaseapp.com",
     databaseURL: "https://espclientsnew-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -67,12 +67,13 @@ function register(event) {
 
     // Basic validation
     if (!username || !email || !password || !confirmPassword || !deviceId) {
-        alert("Please fill in all required fields.");
+        showToast("Please fill in all required fields.");
         return;
     }
 
     if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+
+        showToast("Passwords do not match!");
         return;
     }
 
@@ -97,12 +98,12 @@ function register(event) {
         })
         .then(() => {
             console.log("User data saved to Firestore.");
-            alert("Registration successful! Redirecting to login...");
+            showToast("Registration successful! Redirecting to login...");
             window.location.href = "login.html"; // Redirect to login page
         })
         .catch((error) => {
             console.error("Registration error:", error.message);
-            alert("Registration failed: " + error.message);
+            showToast("Registration failed: " + error.message);
         });
 }
 
@@ -116,7 +117,7 @@ function loginUser(event) {
 
     // Validation
     if (!email || !password) {
-        alert("Please enter both email and password.");
+        showToast("Please enter both email and password.");
         return;
     }
 
@@ -125,16 +126,15 @@ function loginUser(event) {
         .then((userCredential) => {
             const user = userCredential.user;
             console.log("User logged in:", user.uid);
-            alert("Login successful! Redirecting...");
+            showToast("Login successful! Redirecting...");
             window.location.href = "dashboard/dashboard.html"; // Redirect after login
         })
         .catch((error) => {
             console.error("Login error:", error.message);
-            alert("Login failed: " + error.message);
+            showToast("Login failed: " + error.message);
         });
 }
-let min_value = null;
-let max_value = null;
+
 
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -158,10 +158,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const deviceId = userData.deviceId;
                     const username = userData.username;
                     const vehicleType = userData.vehicleType; // Get vehicleType
-                    
-                    localStorage.setItem("deviceId",deviceId);
+
+                    localStorage.setItem("deviceId", deviceId);
                     localStorage.setItem("username", username);
-                   
+                    console.log(username);
                     // Update UI
                     document.getElementById("device-id").innerText = deviceId;
                     document.getElementById("usernametag").innerText = `Hi, ${username} !`;
@@ -174,12 +174,16 @@ document.addEventListener("DOMContentLoaded", async function () {
                         const vehicleData = vehicleSnap.data();
                         min_value = vehicleData.minLevel;
                         max_value = vehicleData.maxLevel;
+                        tank_liter = vehicleData.tankvolum;
+
                         localStorage.setItem("min_value", min_value);
                         localStorage.setItem("max_value", max_value);
-                      
+                        localStorage.setItem("tank_value", tank_liter);
+
 
                         document.getElementById("min-id").innerText = min_value;
                         document.getElementById("max-id").innerText = max_value;
+                        document.getElementById("tank_capasity").innerText = tank_liter;
                     } else {
                         console.log("No vehicle data found.");
                     }
@@ -187,7 +191,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     // Call additional functions
                     loadSensorData(deviceId);
                 } catch (error) {
-                    console.error("Error fetching data:", error);
+
                 }
             } else {
                 // Redirect if user is not logged in
@@ -196,19 +200,63 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 });
+// Function to show the toast notification
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toastMessage");
+    const blurOverlay = document.getElementById("blurOverlay");
+
+    if (!toast || !toastMessage || !blurOverlay) {
+        console.error("Toast or blur overlay elements not found in the DOM");
+        return;
+    }
+
+    // Set the toast message
+    toastMessage.textContent = message;
+
+    // Show the toast and blur overlay
+    toast.classList.add("show");
+    document.body.classList.add("blurred"); // Add blur to the entire page
+    blurOverlay.style.display = "block"; // Show the blur overlay
+
+    // Hide the toast and blur overlay after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+        document.body.classList.remove("blurred"); // Remove blur from the entire page
+        blurOverlay.style.display = "none"; // Hide the blur overlay
+    }, 2000); // 3 seconds
+}
+
+
+// Fetch initial fuel value once
+async function getInitialFuel() {
+    try {
+        const fuelSnapshot = await get(ref(db, `${userId}/fuel_sensor/value`));
+        if (fuelSnapshot.exists()) {
+            initialFuel = parseFloat(fuelSnapshot.val());
+            if (isNaN(initialFuel)) {
+                console.error("Invalid initial fuel value");
+                initialFuel = 0;
+            }
+            console.log('Initial Fuel Loaded:', initialFuel);
+        }
+    } catch (error) {
+        console.error('Error fetching initial fuel:', error);
+    }
+}
 
 function loadSensorData(deviceId) {
     const sensorRef = firebase.database().ref(deviceId);
     sensorRef.on("value", (snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-            document.getElementById("ultrasonic-value").innerText = `Distance: ${data.ultrasonic.value} cm`;
+
             document.getElementById("led-status").innerText = `LED Status: ${data.led_status.value}`;
 
             // Declare current_level correctly
             let current_level = data.fuel_sensor.value;
             let lati = data.tracking.longitude;
-            localStorage.setItem("latitude",lati) ;
+            localStorage.setItem("latitude", lati);
 
             let battery_level = data.battery.value;
 
@@ -216,12 +264,12 @@ function loadSensorData(deviceId) {
             localStorage.setItem("battery_level", battery_level);
             console.log(localStorage);
 
-            setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 5000);
+            setTimeout(() => updateFuelLevel(min_value, max_value, current_level), 10);
             setTimeout(() => updateBattery(battery_level), 500);
-            
+
 
         } else {
-            document.getElementById("ultrasonic-value").innerText = "No data available";
+
             document.getElementById("led-status").innerText = "LED Status: --";
         }
     });
@@ -236,42 +284,7 @@ function logout() {
         console.error("Logout error:", error);
     });
 }
-// 🔹 Function to Sign in with Google
-function signInWithGoogle() {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
-        .then((result) => {
-            const user = result.user;
 
-            // Check if user already exists in Firestore
-            return db.collection('users').doc(user.uid).get()
-                .then((doc) => {
-                    if (!doc.exists) {
-                        // If user does not exist, collect additional details
-                        const username = prompt("Enter a username:");
-                        const deviceId = prompt("Enter your device ID:");
-                        const vehicleType = prompt("Enter your vehicle type (motorcycle, van, car, lorry):");
-                        const mileage = prompt("Enter your vehicle mileage:");
-
-                        return db.collection('users').doc(user.uid).set({
-                            username,
-                            email: user.email,
-                            deviceId,
-                            vehicleType,
-                            mileage,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
-                });
-        })
-        .then(() => {
-            alert("Google Sign-In successful! Redirecting...");
-            window.location.href = "dashboard/dashboard.html";
-        })
-        .catch((error) => {
-            alert("Google Sign-In failed: " + error.message);
-        });
-}
 
 // Google Sign-In function
 function googleSignIn() {
@@ -301,12 +314,12 @@ function googleSignIn() {
             });
         })
         .then(() => {
-            alert("Login successful! Redirecting...");
+            showToast("Login successful! Redirecting...");
             window.location.href = "dashboard/dashboard.html";
         })
         .catch((error) => {
             console.error("Google Sign-In failed:", error.message);
-            alert("Google Sign-In failed: " + error.message);
+            showToast("Google Sign-In failed: " + error.message);
         });
 }
 
@@ -339,7 +352,7 @@ function googleLogin() {
         })
         .catch((error) => {
             console.error("Google Login Error:", error.message);
-            alert("Google Login Failed: " + error.message);
+            showToast("Google Login Failed: " + error.message);
         });
 }
 function completeGoogleRegistration(event) {
@@ -347,7 +360,7 @@ function completeGoogleRegistration(event) {
 
     const user = firebase.auth().currentUser;
     if (!user) {
-        alert("User not logged in!");
+        showToast("User not logged in!");
         return;
     }
 
@@ -357,7 +370,7 @@ function completeGoogleRegistration(event) {
     const mileage = document.getElementById('mileage').value.trim();
 
     if (!username || !deviceId) {
-        alert("Please fill in all required fields.");
+        showToast("Please fill in all required fields.");
         return;
     }
 
@@ -374,12 +387,12 @@ function completeGoogleRegistration(event) {
     db.collection("users").doc(user.uid).set(userData)
         .then(() => {
             console.log("User data saved to Firestore.");
-            alert("Registration completed! Redirecting to dashboard...");
+            showToast("Registration completed! Redirecting to dashboard...");
             window.location.href = "dashboard/dashboard.html";
         })
         .catch((error) => {
             console.error("Error saving user data:", error);
-            alert("Error: " + error.message);
+            showToast("Error: " + error.message);
         });
 }
 document.addEventListener("DOMContentLoaded", function () {
@@ -417,7 +430,7 @@ function googlein() {
         })
         .catch((error) => {
             console.error("Google Login Error:", error.message);
-            alert("Google Login Failed: " + error.message);
+            showToast("Google Login Failed: " + error.message);
         });
 }
 
